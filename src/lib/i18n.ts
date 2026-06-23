@@ -94,6 +94,13 @@ export type Dict = {
   saveDatePrompt: string;
   saveDateGranted: string;
   saveDateDenied: string;
+  // venue map + dress code
+  venueMap: string;
+  venueMapHint: string;
+  openInMaps: string;
+  dressInspiration: string;
+  dressFormal: string;
+  dressBatik: string;
 };
 
 const en: Dict = {
@@ -177,6 +184,12 @@ const en: Dict = {
   saveDatePrompt: "Enable a browser reminder one day before the event?",
   saveDateGranted: "Reminder set — we will notify you one day before.",
   saveDateDenied: "Notifications blocked. You can enable them in browser settings.",
+  venueMap: "Venue Location",
+  venueMapHint: "Golden Tulip Jineng Resort, Kuta, Bali",
+  openInMaps: "Open in Google Maps",
+  dressInspiration: "Dress Inspiration",
+  dressFormal: "Formal Attire",
+  dressBatik: "Batik Welcome",
 };
 
 const id: Dict = {
@@ -260,6 +273,12 @@ const id: Dict = {
   saveDatePrompt: "Aktifkan pengingat browser satu hari sebelum acara?",
   saveDateGranted: "Pengingat disetel — kami akan memberi tahu Anda sehari sebelumnya.",
   saveDateDenied: "Notifikasi diblokir. Anda dapat mengaktifkannya di pengaturan browser.",
+  venueMap: "Lokasi Tempat Acara",
+  venueMapHint: "Golden Tulip Jineng Resort, Kuta, Bali",
+  openInMaps: "Buka di Google Maps",
+  dressInspiration: "Inspirasi Busana",
+  dressFormal: "Busana Formal",
+  dressBatik: "Batik Diterima",
 };
 
 const zh: Dict = {
@@ -343,6 +362,12 @@ const zh: Dict = {
   saveDatePrompt: "是否在活动前一天启用浏览器提醒？",
   saveDateGranted: "提醒已设置 — 我们将在前一天通知您。",
   saveDateDenied: "通知已被阻止。您可以在浏览器设置中启用。",
+  venueMap: "会场位置",
+  venueMapHint: "Golden Tulip Jineng Resort, 库塔, 巴厘岛",
+  openInMaps: "在 Google 地图中打开",
+  dressInspiration: "着装灵感",
+  dressFormal: "正装",
+  dressBatik: "欢迎巴迪克",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };

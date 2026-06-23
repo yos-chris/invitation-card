@@ -260,3 +260,45 @@ Unresolved issues / risks:
 - Guestbook wishes + reminder state are per-browser (localStorage) — not shared across devices.
 - Notification reminder uses setTimeout (works while the page is open); a true background reminder would require a Service Worker + Push API (larger scope).
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a "dress code inspiration" mini-gallery (batik patterns) within the event detail; (3) add subtle hover micro-animations to the RSVP form fields (gold glow on focus); (4) consider a "venue map" embed (static map image) within the venue card.
+
+---
+Task ID: 7
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + venue map + dress code visualization + RSVP gold glow focus + hero corner accents.
+
+Work Log:
+- Reviewed worklog (Tasks 1–6) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified top remaining gaps: venue map, dress code visualization, hero micro-interactions.
+- Generated 2 new AI images via `z-ai image` CLI:
+  - `venue-map.png` (1344×768) — elegant stylized vintage map of Kuta Bali, hand-drawn cartography, cream parchment + navy + gold.
+  - `batik.png` (1024×1024) — Indonesian batik pattern, navy + gold, traditional floral/geometric motifs.
+  - Saved to `public/invitation/gallery/`.
+- NEW COMPONENTS in `src/components/invitation/`:
+  - `VenueMap.tsx` — "Venue Location" section with a framed stylized map image (classic frame + corner ornaments + brand-cohesion gradient overlay), a pulsing navy/gold venue pin marker (MapPin icon with `pin-pulse` animation), a compass mark ("N" + lotus) in the top-right corner, and an "Open in Google Maps" pill button linking to `https://www.google.com/maps/search/?api=1&query=Golden+Tulip+Jineng+Resort+Jl.+Sunset+Road+No.98+Kuta+Bali` (opens in new tab). Fully i18n.
+  - `DressCode.tsx` — "Dress Inspiration" section with two elegant swatch cards side-by-side (stacked on mobile): (1) Formal Attire — navy gradient circle with Shirt icon; (2) Batik Welcome — circular batik pattern image with radial vignette. Each card has gold corner ticks, hover lift, and scales the swatch on hover. Fully i18n.
+- NEW FEATURES:
+  - **Venue map** with stylized cartography + pulsing pin + Google Maps link. Verified: link href correct, map renders with overlay + pin.
+  - **Dress code visualization** — two swatch cards (Formal + Batik) with the AI-generated batik pattern. VLM-confirmed both render correctly.
+- ENHANCED existing components:
+  - `EventDetail.tsx` — integrated `<VenueMap>` and `<DressCode>` after the EventActions row. Imported both components.
+  - `Rsvp.tsx` — enhanced all 3 form fields (Name input, Select trigger, Textarea) with a gold glow focus shadow: `focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]` in addition to the existing orange border + white bg + gold ring.
+  - `Hero.tsx` — added 4 animated gold L-shaped corner accent brackets around the framed hero card, each with a staggered `hero-corner` pulse animation (3s, 0.4s delays).
+  - `globals.css` — added `hero-corner` keyframe (opacity 0.4→1 + scale 1→1.15 pulse).
+- i18n (`src/lib/i18n.ts`) — added 7 new keys per language: venueMap, venueMapHint, openInMaps, dressInspiration, dressFormal, dressBatik.
+
+Stage Summary:
+- All new features verified via agent-browser + VLM:
+  1. Venue map: stylized map image with pulsing pin + "Open in Google Maps" button (correct href). VLM-confirmed. ✓
+  2. Dress code: two swatch cards (Formal navy circle + Batik pattern image). VLM-confirmed. ✓
+  3. Hero corner accents: 4 animated gold L-shaped brackets around hero card. VLM-confirmed. ✓
+  4. RSVP gold glow focus: all 3 fields now have orange border + white bg + gold ring + gold/orange glow shadow on focus. ✓
+  5. Mobile (390×844): venue map + dress code render cleanly, no horizontal scroll, swatch cards stack properly. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. VenueMap + DressCode are integrated INTO the Event Detail section (not new sections). No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map + batik images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- Notification reminder uses setTimeout (works while the page is open).
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a subtle "scroll progress" indicator bar at the top of the main page; (3) add an elegant "thank you" confirmation card that appears after RSVP submission (in addition to the confetti); (4) consider adding subtle parallax to the gallery photos on scroll.

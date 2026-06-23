@@ -51,6 +51,12 @@ export function Hero({ lang }: { lang: Lang }) {
       <GoldenPetals count={14} opacity={0.25} speed={0.6} className="!fixed" style={{ position: "fixed" }} />
 
       <div className="relative mx-auto max-w-3xl">
+        {/* animated gold corner accents around the hero card */}
+        <span className="pointer-events-none absolute -left-2 -top-2 h-6 w-6 border-l-2 border-t-2 border-gold/70" style={{ animation: "hero-corner 3s ease-in-out infinite" }} aria-hidden="true" />
+        <span className="pointer-events-none absolute -right-2 -top-2 h-6 w-6 border-r-2 border-t-2 border-gold/70" style={{ animation: "hero-corner 3s ease-in-out 0.4s infinite" }} aria-hidden="true" />
+        <span className="pointer-events-none absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold/70" style={{ animation: "hero-corner 3s ease-in-out 0.8s infinite" }} aria-hidden="true" />
+        <span className="pointer-events-none absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold/70" style={{ animation: "hero-corner 3s ease-in-out 1.2s infinite" }} aria-hidden="true" />
+
         {/* framed invitation card with parallax tilt */}
         <Reveal className="frame-classic relative bg-white/60 px-6 py-10 text-center shadow-[0_30px_70px_-30px_rgba(3,31,68,0.45)] sm:px-12 sm:py-14">
           <div

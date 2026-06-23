@@ -379,6 +379,12 @@
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
 }
 
+/* Hero animated gold corner accents */
+@keyframes hero-corner {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

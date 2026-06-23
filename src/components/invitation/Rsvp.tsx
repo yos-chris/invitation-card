@@ -85,7 +85,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: () => void }
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.namePlaceholder}
-                className="border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30"
+                className="border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
               />
             </div>
 
@@ -145,7 +145,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: () => void }
               <Select value={guests} onValueChange={setGuests}>
                 <SelectTrigger
                   id="rsvp-guests"
-                  className="border-navy/30 bg-ivory/40 font-body-inv text-navy transition-all focus:border-orange focus:bg-white focus:ring-gold/30"
+                  className="border-navy/30 bg-ivory/40 font-body-inv text-navy transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -173,7 +173,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: () => void }
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t.messagePlaceholder}
                 rows={3}
-                className="resize-none border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30"
+                className="resize-none border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
               />
             </div>
 
