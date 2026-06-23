@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
+import { Lightbox, type GalleryImage } from "./Lightbox";
 
 const gold = "#C8A45D";
 
 /* Real AI-generated gallery images */
-const GALLERY_IMAGES = [
+const GALLERY_IMAGES: GalleryImage[] = [
   { src: "/invitation/gallery/celebration.png", alt: "Celebration" },
   { src: "/invitation/gallery/community.png", alt: "Care & Community" },
   { src: "/invitation/gallery/team.png", alt: "Our Team" },
@@ -24,6 +26,7 @@ function GalleryPhoto({
   featured = false,
   delay = 0,
   overlay = "navy",
+  onClick,
 }: {
   className?: string;
   src: string;
@@ -32,6 +35,7 @@ function GalleryPhoto({
   featured?: boolean;
   delay?: number;
   overlay?: "navy" | "royal" | "warm";
+  onClick?: () => void;
 }) {
   const overlayGradient =
     overlay === "navy"
@@ -43,8 +47,15 @@ function GalleryPhoto({
   return (
     <Reveal
       delay={delay}
-      className={`photo-frame group relative overflow-hidden ${className ?? ""}`}
+      className={`photo-frame group relative cursor-pointer overflow-hidden ${className ?? ""}`}
     >
+      <button
+        type="button"
+        onClick={onClick}
+        className="absolute inset-0 z-[1] h-full w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        aria-label={alt}
+        tabIndex={-1}
+      />
       {/* Real photo background */}
       <img
         src={src}
@@ -119,6 +130,25 @@ function GalleryPhoto({
 export function Gallery({ lang }: { lang: Lang }) {
   const t = DICT[lang];
   const imgs = GALLERY_IMAGES;
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
+
+  // Lightbox images with localized captions
+  const lightboxImages: GalleryImage[] = imgs.map((im, i) => ({
+    ...im,
+    caption:
+      [
+        t.galleryCaption1,
+        t.galleryCaption2,
+        t.galleryCaption3,
+        t.galleryCaption4,
+        t.galleryCaption5,
+        t.galleryCaption6,
+      ][i] ?? im.alt,
+  }));
+
+  const open = (i: number) => setLightboxIndex(i);
+  const close = () => setLightboxIndex(-1);
+
   return (
     <section className="relative px-4 py-16 sm:py-20">
       {/* faint navy band backdrop for depth */}
@@ -145,6 +175,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             featured
             delay={0}
             overlay="navy"
+            onClick={() => open(0)}
           />
           <GalleryPhoto
             className="col-span-3 row-span-1"
@@ -153,6 +184,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             caption={t.galleryCaption2}
             delay={80}
             overlay="royal"
+            onClick={() => open(1)}
           />
           <GalleryPhoto
             className="col-span-1 row-span-1"
@@ -160,6 +192,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             alt={imgs[2].alt}
             delay={160}
             overlay="warm"
+            onClick={() => open(2)}
           />
           <GalleryPhoto
             className="col-span-2 row-span-2"
@@ -168,6 +201,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             caption={t.galleryCaption4}
             delay={240}
             overlay="royal"
+            onClick={() => open(3)}
           />
           <GalleryPhoto
             className="col-span-2 row-span-1"
@@ -176,6 +210,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             caption={t.galleryCaption5}
             delay={120}
             overlay="warm"
+            onClick={() => open(4)}
           />
           <GalleryPhoto
             className="col-span-2 row-span-1"
@@ -184,6 +219,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             caption={t.galleryCaption6}
             delay={200}
             overlay="navy"
+            onClick={() => open(5)}
           />
         </div>
 
@@ -196,6 +232,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             caption={t.galleryCaption1}
             featured
             overlay="navy"
+            onClick={() => open(0)}
           />
           <div className="grid grid-cols-2 gap-4">
             <GalleryPhoto
@@ -204,6 +241,7 @@ export function Gallery({ lang }: { lang: Lang }) {
               alt={imgs[1].alt}
               caption={t.galleryCaption2}
               overlay="royal"
+              onClick={() => open(1)}
             />
             <GalleryPhoto
               className="aspect-square"
@@ -211,6 +249,7 @@ export function Gallery({ lang }: { lang: Lang }) {
               alt={imgs[2].alt}
               caption={t.galleryCaption3}
               overlay="warm"
+              onClick={() => open(2)}
             />
           </div>
           <GalleryPhoto
@@ -219,6 +258,7 @@ export function Gallery({ lang }: { lang: Lang }) {
             alt={imgs[3].alt}
             caption={t.galleryCaption4}
             overlay="navy"
+            onClick={() => open(3)}
           />
           <div className="grid grid-cols-2 gap-4">
             <GalleryPhoto
@@ -227,6 +267,7 @@ export function Gallery({ lang }: { lang: Lang }) {
               alt={imgs[4].alt}
               caption={t.galleryCaption5}
               overlay="warm"
+              onClick={() => open(4)}
             />
             <GalleryPhoto
               className="aspect-square"
@@ -234,6 +275,7 @@ export function Gallery({ lang }: { lang: Lang }) {
               alt={imgs[5].alt}
               caption={t.galleryCaption6}
               overlay="royal"
+              onClick={() => open(5)}
             />
           </div>
         </div>
@@ -246,6 +288,17 @@ export function Gallery({ lang }: { lang: Lang }) {
           />
         </Reveal>
       </div>
+
+      {/* Lightbox */}
+      {lightboxIndex >= 0 ? (
+        <Lightbox
+          lang={lang}
+          images={lightboxImages}
+          index={lightboxIndex}
+          onClose={close}
+          onIndex={setLightboxIndex}
+        />
+      ) : null}
     </section>
   );
 }

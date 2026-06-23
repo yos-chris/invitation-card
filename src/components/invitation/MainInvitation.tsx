@@ -15,6 +15,8 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SectionNav } from "./SectionNav";
 import { BackToTop } from "./BackToTop";
 import { ConfettiBurst } from "./ConfettiBurst";
+import { ScrollProgress } from "./ScrollProgress";
+import { ThankYouCard } from "./ThankYouCard";
 
 export function MainInvitation({
   lang,
@@ -29,6 +31,7 @@ export function MainInvitation({
   const [showScrollHint, setShowScrollHint] = useState(true);
   const [confettiKey, setConfettiKey] = useState(0);
   const [fireConfetti, setFireConfetti] = useState(false);
+  const [thankYou, setThankYou] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -47,10 +50,27 @@ export function MainInvitation({
     });
   };
 
+  const handleRsvpConfirm = (name: string) => {
+    triggerConfetti();
+    setThankYou(name);
+  };
+
   return (
     <div className="paper-ivory relative flex min-h-[100dvh] w-full flex-col">
       {/* Confetti burst overlay (keyed so it can re-fire) */}
       <ConfettiBurst key={confettiKey} fire={fireConfetti} />
+
+      {/* Scroll progress indicator */}
+      <ScrollProgress />
+
+      {/* Thank-you card after RSVP */}
+      {thankYou !== null ? (
+        <ThankYouCard
+          lang={lang}
+          name={thankYou}
+          onClose={() => setThankYou(null)}
+        />
+      ) : null}
 
       {/* decorative viewport frame */}
       <div className="no-print pointer-events-none fixed inset-2 z-40 border border-navy/25 sm:inset-4" />
@@ -117,7 +137,7 @@ export function MainInvitation({
         </div>
         <SectionBridge />
         <div id="sec-rsvp">
-          <Rsvp lang={lang} onConfirm={triggerConfetti} />
+          <Rsvp lang={lang} onConfirm={handleRsvpConfirm} />
           <Guestbook lang={lang} />
         </div>
         <ClosingFooter lang={lang} onReplay={onReplay} />

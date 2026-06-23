@@ -302,3 +302,40 @@ Unresolved issues / risks:
 - Guestbook wishes + reminder state are per-browser (localStorage).
 - Notification reminder uses setTimeout (works while the page is open).
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a subtle "scroll progress" indicator bar at the top of the main page; (3) add an elegant "thank you" confirmation card that appears after RSVP submission (in addition to the confetti); (4) consider adding subtle parallax to the gallery photos on scroll.
+
+---
+Task ID: 8
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + scroll progress indicator + RSVP thank-you card + gallery lightbox.
+
+Work Log:
+- Reviewed worklog (Tasks 1–7) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified top remaining polish: scroll progress, RSVP thank-you card, gallery lightbox.
+- NEW COMPONENTS in `src/components/invitation/`:
+  - `ScrollProgress.tsx` — thin (3px) gold→orange→gold gradient progress bar fixed to the very top of the viewport (z-90, no-print). Tracks scroll position via passive scroll listener + resize. Smooth width transition (150ms ease-out) with a gold glow box-shadow. Fills proportionally to page scroll.
+  - `ThankYouCard.tsx` — elegant confirmation modal shown after a successful RSVP. Navy/ivory framed card with corner ornaments, floral top/bottom sprigs, shimmering lotus, "Thank you" heading (orange eyebrow + navy serif), personalized message ("Dear {name}, your attendance confirmation means the world to us..."), event date/time/venue recap, and a Close button. Scale-in animation. Click-outside or Close button dismisses. Fully i18n.
+  - `Lightbox.tsx` — full-screen image viewer for the gallery. Cinema-navy background with grain, gold-bordered image, top bar (lotus + close X), prev/next chevron arrows, counter pill ("1 / 6"), caption overlay. Full keyboard support: Esc closes, ←/→ navigate. Body scroll locked while open. Click-outside closes. Fully i18n.
+- NEW FEATURES:
+  - **Scroll progress indicator** — verified: bar fills proportionally on scroll (129px fill at 500px scroll on a 1440px viewport). VLM-confirmed visible at top edge.
+  - **RSVP thank-you card** — verified: after submitting RSVP with "John Smith", the ThankYouCard appeared with "Dear John Smith, your attendance confirmation means the world to us..." + event recap + Close button. VLM-confirmed.
+  - **Gallery lightbox** — verified: clicking any gallery photo opens a full-screen lightbox with the image, prev/next arrows, close button, lotus mark, and "1 / 6" counter. Esc closes, ←/→ navigate. Works on desktop + mobile.
+- ENHANCED existing components:
+  - `Gallery.tsx` — added `useState` for lightbox index, `onClick` prop to GalleryPhoto (with a transparent button overlay for accessibility + focus ring), wired all 6 desktop + 6 mobile photos to open the lightbox with their index, renders `<Lightbox>` when index >= 0. Localized captions passed to lightbox images.
+  - `Rsvp.tsx` — changed `onConfirm` signature from `() => void` to `(name: string) => void`, passes the guest's name so the thank-you card can be personalized.
+  - `MainInvitation.tsx` — added `<ScrollProgress>`, `<ThankYouCard>` (conditional on `thankYou` state), `handleRsvpConfirm(name)` handler that triggers confetti + shows the thank-you card, wired Rsvp `onConfirm={handleRsvpConfirm}`.
+- i18n (`src/lib/i18n.ts`) — added 6 new keys per language: thankYouTitle, thankYouBody (function taking name), thankYouClose, close, prev, next.
+
+Stage Summary:
+- All new features verified via agent-browser + VLM:
+  1. Scroll progress: thin gold gradient bar at top, fills on scroll. VLM-confirmed. ✓
+  2. Thank-you card: personalized "Dear John Smith..." modal after RSVP. VLM-confirmed. ✓
+  3. Gallery lightbox: full-screen viewer with nav arrows, counter "1 / 6", keyboard support (Esc/←/→). VLM-confirmed. Works on mobile. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. ScrollProgress/ThankYouCard/Lightbox are utility overlays / micro-interactions, not new sections. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map + batik images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- Notification reminder uses setTimeout (works while the page is open).
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add subtle parallax to the gallery photos on scroll; (3) add an elegant "table of contents" / chapter index overlay; (4) consider adding a subtle ambient particle effect to the RSVP section.

@@ -101,6 +101,14 @@ export type Dict = {
   dressInspiration: string;
   dressFormal: string;
   dressBatik: string;
+  // RSVP thank-you card
+  thankYouTitle: string;
+  thankYouBody: (n: string) => string;
+  thankYouClose: string;
+  // gallery lightbox
+  close: string;
+  prev: string;
+  next: string;
 };
 
 const en: Dict = {
@@ -190,6 +198,12 @@ const en: Dict = {
   dressInspiration: "Dress Inspiration",
   dressFormal: "Formal Attire",
   dressBatik: "Batik Welcome",
+  thankYouTitle: "Thank you",
+  thankYouBody: (n) => `Dear ${n}, your attendance confirmation means the world to us. We look forward to celebrating together on July 28, 2026.`,
+  thankYouClose: "Close",
+  close: "Close",
+  prev: "Previous",
+  next: "Next",
 };
 
 const id: Dict = {
@@ -279,6 +293,12 @@ const id: Dict = {
   dressInspiration: "Inspirasi Busana",
   dressFormal: "Busana Formal",
   dressBatik: "Batik Diterima",
+  thankYouTitle: "Terima kasih",
+  thankYouBody: (n) => `Yth. ${n}, konfirmasi kehadiran Anda sangat berarti bagi kami. Kami menantikan perayaan bersama pada 28 Juli 2026.`,
+  thankYouClose: "Tutup",
+  close: "Tutup",
+  prev: "Sebelumnya",
+  next: "Berikutnya",
 };
 
 const zh: Dict = {
@@ -368,6 +388,12 @@ const zh: Dict = {
   dressInspiration: "着装灵感",
   dressFormal: "正装",
   dressBatik: "欢迎巴迪克",
+  thankYouTitle: "感谢您",
+  thankYouBody: (n) => `尊敬的${n}，您的出席确认对我们意义非凡。期待与您在 2026 年 7 月 28 日共庆佳节。`,
+  thankYouClose: "关闭",
+  close: "关闭",
+  prev: "上一张",
+  next: "下一张",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };

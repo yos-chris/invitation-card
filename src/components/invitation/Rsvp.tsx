@@ -19,7 +19,7 @@ import { MessageCircle, Check, Sparkles } from "lucide-react";
 
 const WA_NUMBER = "6285710558888";
 
-export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: () => void }) {
+export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: string) => void }) {
   const t = DICT[lang];
   const [name, setName] = useState("");
   const [attendance, setAttendance] = useState<"attend" | "no">("attend");
@@ -47,8 +47,8 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: () => void }
     window.open(url, "_blank", "noopener,noreferrer");
     setOpened(true);
     setTimeout(() => setOpened(false), 4000);
-    // Trigger celebratory confetti burst
-    onConfirm?.();
+    // Trigger celebratory confetti burst + thank-you card
+    onConfirm?.(name.trim());
   };
 
   return (
