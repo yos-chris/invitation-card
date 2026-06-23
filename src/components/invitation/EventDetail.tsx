@@ -3,6 +3,7 @@
 import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
+import { SectionTitle } from "./SectionTitle";
 import { EventActions } from "./EventActions";
 import { CalendarDays, Clock, MapPin, Phone, Shirt } from "lucide-react";
 
@@ -18,16 +19,7 @@ export function EventDetail({ lang }: { lang: Lang }) {
   return (
     <section className="relative px-4 py-16 sm:py-20">
       <div className="mx-auto max-w-4xl">
-        <Reveal className="text-center">
-          <LotusMark width={44} className="mx-auto mb-2" color="#C8A45D" />
-          <h2 className="font-serif-inv text-3xl font-semibold text-navy sm:text-4xl">
-            {t.detailTitle}
-          </h2>
-          <p className="mx-auto mt-2 max-w-md font-cormorant text-base italic text-navy/65">
-            {t.detailIntro}
-          </p>
-          <ClassicDivider className="mx-auto mt-5 max-w-[240px]" color="#031F44" />
-        </Reveal>
+        <SectionTitle title={t.detailTitle} intro={t.detailIntro} lang={lang} />
 
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {cards.map((c, i) => {

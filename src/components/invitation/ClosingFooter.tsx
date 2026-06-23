@@ -19,6 +19,12 @@ export function ClosingFooter({
         <div className="frame-classic relative bg-navy px-6 py-12 text-center text-ivory sm:px-12">
           <FrameCorners color="gold" inset={8} size={36} />
 
+          {/* gold corner medallions (decorative dots) */}
+          <span className="pointer-events-none absolute left-3 top-3 h-2 w-2 rounded-full bg-gold/70" />
+          <span className="pointer-events-none absolute right-3 top-3 h-2 w-2 rounded-full bg-gold/70" />
+          <span className="pointer-events-none absolute bottom-3 left-3 h-2 w-2 rounded-full bg-gold/70" />
+          <span className="pointer-events-none absolute bottom-3 right-3 h-2 w-2 rounded-full bg-gold/70" />
+
           {/* decorative top flourish */}
           <FloralSprig
             className="pointer-events-none mx-auto mb-3 block"
@@ -29,13 +35,31 @@ export function ClosingFooter({
 
           <LotusMark width={52} className="anim-shimmer mx-auto mb-4" color="#C8A45D" />
 
-          <ClassicDivider className="mx-auto mb-6 max-w-[200px]" color="#C8A45D" />
+          {/* Richer divider with diamond + double line */}
+          <div className="mx-auto mb-6 flex max-w-[220px] items-center justify-center gap-2" aria-hidden="true">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold/60" />
+            <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+            <span className="h-px w-6 bg-gold/60" />
+            <span className="h-2 w-2 rotate-45 border border-gold" />
+            <span className="h-px w-6 bg-gold/60" />
+            <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold/60" />
+          </div>
 
           <p className="font-serif-inv text-2xl italic leading-relaxed text-ivory sm:text-3xl">
             {t.footerText}
           </p>
 
-          <ClassicDivider className="mx-auto mt-6 max-w-[200px]" color="#C8A45D" />
+          {/* mirror divider */}
+          <div className="mx-auto mt-6 flex max-w-[220px] items-center justify-center gap-2" aria-hidden="true">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold/60" />
+            <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+            <span className="h-px w-6 bg-gold/60" />
+            <span className="h-2 w-2 rotate-45 border border-gold" />
+            <span className="h-px w-6 bg-gold/60" />
+            <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold/60" />
+          </div>
 
           <div className="mt-6 flex flex-col items-center gap-3">
             <img

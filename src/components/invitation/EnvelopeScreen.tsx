@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { DICT, cardFor, type Lang } from "@/lib/i18n";
 import { LotusMark, ClassicDivider } from "./Ornaments";
 import { GoldenPetals } from "./GoldenPetals";
+import { playPaperRustle, playChime } from "@/lib/sfx";
 
 type Phase = "enter" | "flap" | "rise-half" | "rise-full" | "focus" | "ready";
 
@@ -17,15 +18,35 @@ export function EnvelopeScreen({
   const t = DICT[lang];
   const [phase, setPhase] = useState<Phase>("enter");
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const rustledRef = useRef(false);
 
   useEffect(() => {
     const push = (fn: () => void, ms: number) =>
       timers.current.push(setTimeout(fn, ms));
 
-    push(() => setPhase("flap"), 1300);
+    push(() => {
+      setPhase("flap");
+      // Play a subtle paper rustle when the flap opens (once)
+      if (!rustledRef.current) {
+        rustledRef.current = true;
+        try {
+          playPaperRustle();
+        } catch {
+          /* audio unavailable */
+        }
+      }
+    }, 1300);
     push(() => setPhase("rise-half"), 2300);
     push(() => setPhase("rise-full"), 3800);
-    push(() => setPhase("focus"), 5100);
+    push(() => {
+      setPhase("focus");
+      // Soft chime when the card reaches focus
+      try {
+        playChime();
+      } catch {
+        /* audio unavailable */
+      }
+    }, 5100);
     push(() => setPhase("ready"), 5700);
 
     return () => {
@@ -57,10 +78,19 @@ export function EnvelopeScreen({
     }
   };
 
+  // keyboard accessibility: Enter/Space opens when ready, skips otherwise
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleStageClick();
+    }
+  };
+
   return (
     <div
-      className="cinema-navy cinema-grain relative flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden px-4 py-8"
+      className="cinema-navy cinema-grain relative flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden px-4 py-8 outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
       onClick={handleStageClick}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       aria-label={t.tapToOpen}

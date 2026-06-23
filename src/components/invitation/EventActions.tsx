@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DICT, type Lang } from "@/lib/i18n";
 import { CalendarPlus, Share2, Copy, Check } from "lucide-react";
+import { SaveDate } from "./SaveDate";
 
 // Event details (shared, language-independent for the calendar file)
 const EVENT = {
@@ -97,6 +98,7 @@ export function EventActions({ lang }: { lang: Lang }) {
           </>
         )}
       </button>
+      <SaveDate lang={lang} />
     </div>
   );
 }

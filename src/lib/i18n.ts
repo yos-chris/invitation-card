@@ -87,6 +87,13 @@ export type Dict = {
   guestbookCount: (n: number) => string;
   backToTop: string;
   print: string;
+  // save the date reminder
+  saveDate: string;
+  saveDateOn: string;
+  saveDateOff: string;
+  saveDatePrompt: string;
+  saveDateGranted: string;
+  saveDateDenied: string;
 };
 
 const en: Dict = {
@@ -164,6 +171,12 @@ const en: Dict = {
   guestbookCount: (n) => `${n} wish${n === 1 ? "" : "es"}`,
   backToTop: "Back to top",
   print: "Print invitation",
+  saveDate: "Save the date",
+  saveDateOn: "Reminder on",
+  saveDateOff: "Save the date",
+  saveDatePrompt: "Enable a browser reminder one day before the event?",
+  saveDateGranted: "Reminder set — we will notify you one day before.",
+  saveDateDenied: "Notifications blocked. You can enable them in browser settings.",
 };
 
 const id: Dict = {
@@ -241,6 +254,12 @@ const id: Dict = {
   guestbookCount: (n) => `${n} ucapan`,
   backToTop: "Kembali ke atas",
   print: "Cetak undangan",
+  saveDate: "Simpan tanggal",
+  saveDateOn: "Pengingat aktif",
+  saveDateOff: "Simpan tanggal",
+  saveDatePrompt: "Aktifkan pengingat browser satu hari sebelum acara?",
+  saveDateGranted: "Pengingat disetel — kami akan memberi tahu Anda sehari sebelumnya.",
+  saveDateDenied: "Notifikasi diblokir. Anda dapat mengaktifkannya di pengaturan browser.",
 };
 
 const zh: Dict = {
@@ -318,6 +337,12 @@ const zh: Dict = {
   guestbookCount: (n) => `${n} 条祝福`,
   backToTop: "回到顶部",
   print: "打印邀请函",
+  saveDate: "记住日期",
+  saveDateOn: "提醒已开启",
+  saveDateOff: "记住日期",
+  saveDatePrompt: "是否在活动前一天启用浏览器提醒？",
+  saveDateGranted: "提醒已设置 — 我们将在前一天通知您。",
+  saveDateDenied: "通知已被阻止。您可以在浏览器设置中启用。",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };

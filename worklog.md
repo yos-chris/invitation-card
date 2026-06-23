@@ -214,3 +214,49 @@ Unresolved issues / risks:
 - Web Audio ambient music remains a generated pad.
 - Guestbook wishes are stored per-browser (localStorage) — not shared across devices. This is intentional for a static invitation site without a backend; a real backend would require an API + moderation.
 - Recommended next steps: (1) add a subtle ambient sound effect (paper rustle) synchronized with the envelope flap opening; (2) add a "save the date" reminder button (e.g., browser notification permission + scheduled reminder); (3) add keyboard accessibility for the envelope stage (Enter to open); (4) consider a "dress code inspiration" mini-gallery (batik patterns) within the event detail.
+
+---
+Task ID: 6
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + keyboard accessibility + sound effects + save-the-date reminder + styling enrichment (section titles, footer medallions).
+
+Work Log:
+- Reviewed worklog (Tasks 1–5) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified remaining polish: keyboard accessibility, sound design, notification reminder, micro-animations, footer richness.
+- NEW MODULE `src/lib/sfx.ts` — one-shot Web Audio sound effects (no external files):
+  - `playPaperRustle()` — filtered noise sweep with bandpass filter sweeping 2200→900Hz, ~0.55s, mimics an envelope flap opening.
+  - `playChime()` — gentle two-note bell (E6→A6 perfect fourth) with sine oscillators + lowpass + exponential decay envelope, ~1.2s.
+  - Uses a shared AudioContext, lazy-initialized, auto-resumes if suspended.
+- NEW COMPONENTS in `src/components/invitation/`:
+  - `SaveDate.tsx` — "Save the Date" reminder button with browser notification permission flow. SSR-safe lazy initializer reads localStorage. On click: if permission granted, schedules a setTimeout notification for July 27, 2026 10:00 AM (one day before event); if permission unknown, shows an elegant confirmation dialog (navy/ivory framed modal with Bell icon, OK/Cancel); if denied, shows a toast. Persists enabled state to localStorage (`bali-anniversary-reminder-v1`). Toast confirmation for granted/denied. Fully i18n.
+  - `SectionTitle.tsx` — reusable premium section heading: shimmering lotus mark, title with an animated gold underline flourish (draw-in via `underline-draw` keyframe, 1.1s), italic intro, classic divider. Used by EventDetail and Guestbook for consistency.
+- NEW FEATURES:
+  - **Keyboard accessibility on envelope stage** — the envelope div now has `onKeyDown` (Enter/Space → open/skip), `focus-visible:ring-2 ring-gold/60`, and `aria-label`. Verified: Tab to focus + Enter opened the invitation.
+  - **Sound design** — paper rustle plays when the envelope flap opens (1.3s into the animation), soft chime plays when the card reaches focus (5.1s). Both wrapped in try/catch for environments without audio. Rustle plays only once per mount (rustledRef guard).
+  - **Save the Date reminder** — button in EventActions (next to calendar + share). Requests notification permission via elegant modal prompt. Schedules a reminder notification for the day before the event.
+- ENHANCED existing components:
+  - `EnvelopeScreen.tsx` — imported sfx, added paper rustle on flap open + chime on focus, added `handleKeyDown`, focus-visible ring, `rustledRef` guard.
+  - `EventActions.tsx` — added `<SaveDate>` as a third action button.
+  - `EventDetail.tsx` — replaced inline title with `<SectionTitle>` (animated underline flourish).
+  - `Guestbook.tsx` — replaced inline title with `<SectionTitle>`.
+  - `ClosingFooter.tsx` — added 4 gold corner medallion dots, replaced simple dividers with rich decorative dividers (diamond + double-line + center diamond pattern, mirrored top and bottom).
+- i18n (`src/lib/i18n.ts`) — added 7 new keys per language: saveDate, saveDateOn, saveDateOff, saveDatePrompt, saveDateGranted, saveDateDenied.
+- `globals.css` — no changes needed (SectionTitle brings its own keyframe via `<style>` tag).
+
+Stage Summary:
+- All new features verified via agent-browser:
+  1. Keyboard accessibility: Tab to focus envelope + Enter opened the invitation. ✓
+  2. Sound effects: paper rustle on flap open + chime on focus (no errors; audio context resumes on user gesture). ✓
+  3. Save the Date button present in EventActions ("SAVE THE DATE"); click opens elegant confirmation dialog with OK/Cancel; permission flow handles granted/denied states. ✓
+  4. Section title underline flourish: gold animated underline draws in beneath "Event Detail" and "Wishes & Greetings" headings. ✓
+  5. Footer medallions: 4 gold corner dots + rich decorative dividers (diamond + double-line pattern) above and below the message. VLM-confirmed. ✓
+  6. Mobile (390×844): all action buttons present and wrapped, no overflow. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. SaveDate/SectionTitle/sfx are utility controls / micro-interactions integrated INTO existing sections. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery images remain AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage) — not shared across devices.
+- Notification reminder uses setTimeout (works while the page is open); a true background reminder would require a Service Worker + Push API (larger scope).
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a "dress code inspiration" mini-gallery (batik patterns) within the event detail; (3) add subtle hover micro-animations to the RSVP form fields (gold glow on focus); (4) consider a "venue map" embed (static map image) within the venue card.
