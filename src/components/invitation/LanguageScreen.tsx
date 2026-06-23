@@ -83,7 +83,7 @@ export function LanguageScreen({
             aria-hidden="true"
           />
           <img
-            src="/invitation/logo.png"
+            src="/invitation/logo-white.png"
             alt="Modern Cancer Hospital Guangzhou — St. Stamford International Medical official logo"
             className="relative mx-auto w-full max-w-[480px] select-none object-contain"
             draggable={false}

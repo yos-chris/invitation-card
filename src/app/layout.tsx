@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Modern Cancer Hospital Guangzhou" }],
   icons: {
-    icon: "/invitation/logo.png",
+    icon: "/invitation/logo-white.png",
   },
   openGraph: {
     title: "1st Anniversary · Bali Office",

@@ -36,7 +36,7 @@ export function SaveDate({ lang }: { lang: Lang }) {
       try {
         new Notification(t.saveDate, {
           body: t.heroTitleLine1 + " — " + t.heroTitleLine2 + " · " + t.dateValue,
-          icon: "/invitation/logo.png",
+          icon: "/invitation/logo-white.png",
         });
       } catch {
         /* ignore */

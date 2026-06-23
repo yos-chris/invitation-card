@@ -726,3 +726,33 @@ Stage Summary:
 Unresolved issues / risks:
 - YouTube background playback may be blocked by some browsers' autoplay policies even after user interaction; the fallback `BACKGROUND_MUSIC_URL` is ready for an mp3 if needed.
 - Gallery.tsx file still exists but is no longer imported/used (harmless dead code).
+
+---
+Task ID: 19
+Agent: Z.ai Code (revision — white logo, English text only)
+Task: Make the Modern Cancer Hospital Guangzhou logo white and keep only the last English text line from the image.
+
+Work Log:
+- Analyzed original `upload/logo (4).png` (3887×556, RGBA, transparent background): contains left infinity emblem (blue+orange), Chinese text "广州现代肿瘤医院", English text "MODERN CANCER HOSPITAL GUANGZHOU", and right circular gold seal.
+- Created `scripts/make-logo-white.mjs` using sharp (pixel-level processing):
+  - Read raw RGBA pixels from the original logo.
+  - For each opaque pixel (alpha > 10): set RGB to 255 (pure white), preserve alpha.
+  - Mask: keep left ~13% width (emblem) + right ~11% width (seal) at all heights; keep bottom ~40% (English text line) in the middle area. Zero out the top Chinese text area.
+  - Output: `public/invitation/logo-white.png` — pure white logo elements on transparent background, only "MODERN CANCER HOSPITAL GUANGZHOU" English text kept (Chinese removed).
+- Updated all logo references from `/invitation/logo.png` to `/invitation/logo-white.png`:
+  - `src/app/layout.tsx` (favicon)
+  - `src/components/invitation/LanguageScreen.tsx` (opening screen logo)
+  - `src/components/invitation/Hero.tsx` (hero section logo)
+  - `src/components/invitation/ClosingFooter.tsx` (footer logo)
+  - `src/components/invitation/SaveDate.tsx` (notification icon)
+- VLM-verified on actual site:
+  - Language screen: "logo is white, shows only English text MODERN CANCER HOSPITAL GUANGZHOU, no Chinese characters, white infinity emblem left, white circular seal right" ✓
+  - Hero section: "logo is white, shows only English text" ✓
+  - Footer: "logo is white on navy background, only English text" ✓
+- Lint clean. Dev server running with no errors.
+
+Stage Summary:
+- Logo is now white (pure #FFFFFF on transparent background).
+- Only the last English text line "MODERN CANCER HOSPITAL GUANGZHOU" is kept (Chinese text removed).
+- Left infinity emblem and right circular seal preserved (in white).
+- Visible on both light (ivory) and dark (navy) backgrounds across the site.
