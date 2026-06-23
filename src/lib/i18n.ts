@@ -36,12 +36,19 @@ export type Dict = {
   attend: string;
   cannotAttend: string;
   numGuests: string;
+  guestCategory: string;
+  guestCategoryFamily: string;
+  guestCategoryFriend: string;
+  guestCategoryColleague: string;
+  guestCategoryOther: string;
+  guestNames: string;
+  guestNamesPlaceholder: string;
   message: string;
   messagePlaceholder: string;
   confirmBtn: string;
   footerText: string;
   footerSig: string;
-  waMessage: (n: string, a: string, g: string, m: string) => string;
+  waMessage: (n: string, a: string, g: string, gc: string, gn: string, m: string) => string;
   musicOn: string;
   musicOff: string;
   replayInvitation: string;
@@ -150,13 +157,20 @@ const en: Dict = {
   attend: "Will attend",
   cannotAttend: "Cannot attend",
   numGuests: "Number of guests",
+  guestCategory: "Guest category",
+  guestCategoryFamily: "Family",
+  guestCategoryFriend: "Friend",
+  guestCategoryColleague: "Colleague",
+  guestCategoryOther: "Other",
+  guestNames: "Guest names",
+  guestNamesPlaceholder: "Names of guests who will join you (optional)",
   message: "Message",
   messagePlaceholder: "A warm message (optional)",
   confirmBtn: "Confirm via WhatsApp",
   footerText: "Your presence will mean a lot to us.",
   footerSig: "Modern Cancer Hospital Guangzhou · St. Stamford International Medical",
-  waMessage: (n, a, g, m) =>
-    `Hello Marlyne, I would like to confirm my attendance for the 1st Anniversary Bali Office event.\n\nName: ${n}\nAttendance: ${a}\nNumber of guests: ${g}\nMessage: ${m}\n\nThank you.`,
+  waMessage: (n, a, g, gc, gn, m) =>
+    `I would like to confirm my attendance for the First Anniversary of Bali Office.\n\nName: ${n}\nAttendance: ${a}\nNumber of guests: ${g}\nGuest category: ${gc}\nGuest names: ${gn}\nMessage: ${m}\n\nThank you.`,
   musicOn: "Music on",
   musicOff: "Music off",
   replayInvitation: "Replay invitation",
@@ -252,13 +266,20 @@ const id: Dict = {
   attend: "Akan hadir",
   cannotAttend: "Tidak dapat hadir",
   numGuests: "Jumlah tamu",
+  guestCategory: "Tamu yang ikut",
+  guestCategoryFamily: "Keluarga",
+  guestCategoryFriend: "Teman",
+  guestCategoryColleague: "Rekan kerja",
+  guestCategoryOther: "Lainnya",
+  guestNames: "Nama tamu",
+  guestNamesPlaceholder: "Nama tamu yang akan ikut (opsional)",
   message: "Pesan",
   messagePlaceholder: "Pesan hangat (opsional)",
   confirmBtn: "Konfirmasi via WhatsApp",
   footerText: "Kehadiran Anda akan sangat berarti bagi kami.",
   footerSig: "Modern Cancer Hospital Guangzhou · St. Stamford International Medical",
-  waMessage: (n, a, g, m) =>
-    `Halo Marlyne, saya ingin mengonfirmasi kehadiran untuk acara Ulang Tahun Pertama Kantor Bali.\n\nNama: ${n}\nKehadiran: ${a}\nJumlah tamu: ${g}\nPesan: ${m}\n\nTerima kasih.`,
+  waMessage: (n, a, g, gc, gn, m) =>
+    `Saya ingin mengonfirmasi kehadiran untuk acara Ulang Tahun Pertama Kantor Bali.\n\nNama: ${n}\nKehadiran: ${a}\nJumlah tamu: ${g}\nTamu yang ikut: ${gc}\nNama tamu: ${gn}\nPesan: ${m}\n\nTerima kasih.`,
   musicOn: "Musik aktif",
   musicOff: "Musik mati",
   replayInvitation: "Putar ulang undangan",
@@ -353,14 +374,21 @@ const zh: Dict = {
   attendance: "出席情况",
   attend: "将出席",
   cannotAttend: "无法出席",
-  numGuests: "出席人数",
+  numGuests: "宾客人数",
+  guestCategory: "同行宾客",
+  guestCategoryFamily: "家人",
+  guestCategoryFriend: "朋友",
+  guestCategoryColleague: "同事",
+  guestCategoryOther: "其他",
+  guestNames: "宾客姓名",
+  guestNamesPlaceholder: "同行宾客姓名（可选）",
   message: "留言",
   messagePlaceholder: "温馨留言（可选）",
   confirmBtn: "通过 WhatsApp 确认",
   footerText: "您的到来对我们意义非凡。",
   footerSig: "广州现代肿瘤医院 · St. Stamford International Medical",
-  waMessage: (n, a, g, m) =>
-    `您好 Marlyne，我想确认出席巴厘岛办事处一周年纪念活动。\n\n姓名：${n}\n出席情况：${a}\n出席人数：${g}\n留言：${m}\n\n谢谢。`,
+  waMessage: (n, a, g, gc, gn, m) =>
+    `我想确认参加巴厘岛办公室一周年纪念活动。\n\n姓名：${n}\n出席情况：${a}\n宾客人数：${g}\n同行宾客：${gc}\n宾客姓名：${gn}\n留言：${m}\n\n谢谢。`,
   musicOn: "音乐开启",
   musicOff: "音乐关闭",
   replayInvitation: "重播邀请函",

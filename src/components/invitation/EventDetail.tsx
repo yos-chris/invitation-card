@@ -6,7 +6,6 @@ import { Reveal } from "./Reveal";
 import { SectionTitle } from "./SectionTitle";
 import { EventActions } from "./EventActions";
 import { VenueMap } from "./VenueMap";
-import { DressCode } from "./DressCode";
 import { CalendarDays, Clock, MapPin, Phone, Shirt } from "lucide-react";
 
 export function EventDetail({ lang }: { lang: Lang }) {
@@ -118,9 +117,6 @@ export function EventDetail({ lang }: { lang: Lang }) {
 
         {/* Venue map */}
         <VenueMap lang={lang} />
-
-        {/* Dress code inspiration */}
-        <DressCode lang={lang} />
       </div>
     </section>
   );

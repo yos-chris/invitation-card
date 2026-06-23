@@ -6,7 +6,7 @@ import { FrameCorners, LotusMark } from "./Ornaments";
 import { MapPin, ExternalLink } from "lucide-react";
 
 const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Golden+Tulip+Jineng+Resort+Jl.+Sunset+Road+No.98+Kuta+Bali";
+  "https://www.google.com/maps/search/?api=1&query=Golden%20Tulip%20Jineng%20Resort%20Jl.%20Sunset%20Road%20No.98%20Kuta%20Kabupaten%20Badung%20Bali";
 
 export function VenueMap({ lang }: { lang: Lang }) {
   const t = DICT[lang];

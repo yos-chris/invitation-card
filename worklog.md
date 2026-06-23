@@ -461,3 +461,56 @@ Unresolved issues / risks:
 - Parallax disabled on touch devices (intentional, for performance).
 - Table of Contents is desktop-only (lg+); mobile users use the section nav dots / scroll.
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a subtle "page enter" sound when the curtain reveals the main page; (3) consider adding a "share to social" sub-menu (Facebook, Twitter, WhatsApp, Copy Link); (4) add a subtle ambient sound when hovering over gallery photos.
+
+---
+Task ID: 12
+Agent: Z.ai Code (revision request)
+Task: Fix envelope animation layering, remove Daftar Isi, fix Google Maps redirect, revise RSVP WhatsApp message + add guest fields, remove DressCode section, ensure no blocking overlays.
+
+Work Log:
+- User reported specific issues: envelope flap covering card, card coming out tilted, broken buttons, dummy Google Maps, "Halo Marlyne" in WhatsApp, floating Daftar Isi, auto-popup modals.
+- ENVELOPE ANIMATION FIX (EnvelopeScreen.tsx + globals.css):
+  - Rewrote CSS: `.env-flap` now uses `perspective(1200px) rotateX(-165deg)` (folds up/back). `.env-card` uses modest translateY (6% → -10% → -18% → -24%) so the card stays fully visible & readable, never flies off-screen. Removed the excessive -72% rise that caused cropping.
+  - Fixed z-index layering: card z1 when hidden (behind opaque envelope body z2), card z5 when rising (in front of everything). Flap z3 when closed, z0 when card is rising (so it can NEVER cover the card).
+  - Card now centered (`alignItems: center`) instead of flex-start, so it emerges from the middle of the envelope naturally.
+  - Removed `anim-float-soft` tilt from envelope body (was causing the "miring"/tilted look). Envelope is now upright and static.
+  - Card is always upright (no rotation), max-height 82vh, object-fit contain. Logo top + RSVP bottom not cropped.
+  - Verified via VLM: "card visible and upright, not tilted, card in front, not cropped, animation clean."
+- REMOVED TABLE OF CONTENTS / DAFTAR ISI:
+  - Removed `<TableOfContents>` import + usage from MainInvitation.tsx. The floating "Daftar Isi" button is completely gone (verified: 0 matches for "Daftar"/"Contents"/"目录").
+- GOOGLE MAPS FIX (VenueMap.tsx):
+  - Updated MAPS_URL to exact requested URL with %20 encoding + "Kabupaten Badung": `https://www.google.com/maps/search/?api=1&query=Golden%20Tulip%20Jineng%20Resort%20Jl.%20Sunset%20Road%20No.98%20Kuta%20Kabupaten%20Badung%20Bali`
+  - Verified: `<a target="_blank" rel="noopener noreferrer">`, visible, correct href.
+- RSVP WHATSAPP MESSAGE REVISION (i18n.ts + Rsvp.tsx):
+  - Removed "Halo Marlyne" / "Hello Marlyne" / "您好 Marlyne" from all 3 languages. Messages now start directly with the confirmation sentence.
+  - New waMessage signature: `(name, attendance, guests, guestCategory, guestNames, message)`.
+  - New message format (EN): "I would like to confirm my attendance for the First Anniversary of Bali Office.\n\nName: ...\nAttendance: ...\nNumber of guests: ...\nGuest category: ...\nGuest names: ...\nMessage: ...\n\nThank you."
+  - New message format (ID): "Saya ingin mengonfirmasi kehadiran untuk acara Ulang Tahun Pertama Kantor Bali.\n\nNama: ...\nKehadiran: ...\nJumlah tamu: ...\nTamu yang ikut: ...\nNama tamu: ...\nPesan: ...\n\nTerima kasih."
+  - New message format (ZH): "我想确认参加巴厘岛办公室一周年纪念活动。\n\n姓名：...\n出席情况：...\n宾客人数：...\n同行宾客：...\n宾客姓名：...\n留言：...\n\n谢谢。"
+  - Added 2 new RSVP fields: Guest category (Select: Family/Friend/Colleague/Other/—) + Guest names (Textarea, optional). Optional empty fields show "—".
+  - Verified: submitted "Budi Santoso" in EN + ID, both opened wa.me/6285710558888 with correct message format (no "Halo Marlyne", all 6 fields, encodeURIComponent applied).
+- REMOVED DRESS CODE SECTION:
+  - Removed `<DressCode>` from EventDetail.tsx (the two swatch cards). Kept only the small attire pill ("ATTIRE | Formal · Batik welcome") as a single info line, per user request.
+- NO AUTO-POPUP MODALS: Verified SaveDate modal only appears on explicit button click (not auto). ThankYouCard only appears after RSVP submit.
+- NO BLOCKING OVERLAYS: Verified all buttons (language, open invitation, music, RSVP, Google Maps, back to top) are clickable and not covered by floating elements. The Daftar Isi button (which was at bottom-center) is removed.
+
+Stage Summary:
+- All 10 final checks from user's request verified:
+  1. Envelope flap no longer in front of card ✓
+  2. Card comes out upright & readable, not tilted ✓
+  3. Envelope animation smooth & cinematic ✓
+  4. All buttons clickable ✓
+  5. Google Maps button redirects to Golden Tulip Jineng Resort ✓
+  6. WhatsApp RSVP message has no "Halo Marlyne" ✓
+  7. RSVP has optional guest category + guest names fields ✓
+  8. Floating "Daftar Isi" removed entirely ✓
+  9. No overlay/modal blocking buttons ✓
+  10. Mobile + desktop not broken ✓
+- Lint clean. Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. DressCode removed (attire kept as small info line only). No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- The TableOfContents.tsx file still exists but is no longer imported/used (harmless dead code; can be deleted later).

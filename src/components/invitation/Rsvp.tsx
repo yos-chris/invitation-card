@@ -16,15 +16,20 @@ import {
 import { ClassicDivider, LotusMark, FrameCorners } from "./Ornaments";
 import { Reveal } from "./Reveal";
 import { GoldenPetals } from "./GoldenPetals";
-import { MessageCircle, Check, Sparkles } from "lucide-react";
+import { MessageCircle, Check, Sparkles, Users } from "lucide-react";
 
 const WA_NUMBER = "6285710558888";
+
+const FOCUS_SHADOW =
+  "focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]";
 
 export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: string) => void }) {
   const t = DICT[lang];
   const [name, setName] = useState("");
   const [attendance, setAttendance] = useState<"attend" | "no">("attend");
   const [guests, setGuests] = useState("1");
+  const [guestCategory, setGuestCategory] = useState("none");
+  const [guestNames, setGuestNames] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [opened, setOpened] = useState(false);
@@ -43,12 +48,24 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
     }
     setError("");
     const attendanceText = attendance === "attend" ? t.attend : t.cannotAttend;
-    const text = t.waMessage(name.trim(), attendanceText, guests, message.trim() || "—");
+    // Map category select value to localized label, "—" if none selected
+    const categoryText =
+      guestCategory === "family"
+        ? t.guestCategoryFamily
+        : guestCategory === "friend"
+          ? t.guestCategoryFriend
+          : guestCategory === "colleague"
+            ? t.guestCategoryColleague
+            : guestCategory === "other"
+              ? t.guestCategoryOther
+              : "—";
+    const namesText = guestNames.trim() || "—";
+    const msgText = message.trim() || "—";
+    const text = t.waMessage(name.trim(), attendanceText, guests, categoryText, namesText, msgText);
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setOpened(true);
     setTimeout(() => setOpened(false), 4000);
-    // Trigger celebratory confetti burst + thank-you card
     onConfirm?.(name.trim());
   };
 
@@ -89,7 +106,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.namePlaceholder}
-                className="border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
+                className={`border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 ${FOCUS_SHADOW}`}
               />
             </div>
 
@@ -138,7 +155,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
               </RadioGroup>
             </div>
 
-            {/* Guests */}
+            {/* Number of guests */}
             <div className="mt-5 space-y-2">
               <Label
                 htmlFor="rsvp-guests"
@@ -149,7 +166,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
               <Select value={guests} onValueChange={setGuests}>
                 <SelectTrigger
                   id="rsvp-guests"
-                  className="border-navy/30 bg-ivory/40 font-body-inv text-navy transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
+                  className={`border-navy/30 bg-ivory/40 font-body-inv text-navy transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 ${FOCUS_SHADOW}`}
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -163,7 +180,51 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
               </Select>
             </div>
 
-            {/* Message */}
+            {/* Guest category (optional) */}
+            <div className="mt-5 space-y-2">
+              <Label
+                htmlFor="rsvp-category"
+                className="flex items-center gap-1.5 font-cormorant text-xs uppercase tracking-[0.25em] text-navy/70"
+              >
+                <Users className="h-3.5 w-3.5 text-royal/70" strokeWidth={1.5} />
+                {t.guestCategory}
+              </Label>
+              <Select value={guestCategory} onValueChange={setGuestCategory}>
+                <SelectTrigger
+                  id="rsvp-category"
+                  className={`border-navy/30 bg-ivory/40 font-body-inv text-navy transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 ${FOCUS_SHADOW}`}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">—</SelectItem>
+                  <SelectItem value="family">{t.guestCategoryFamily}</SelectItem>
+                  <SelectItem value="friend">{t.guestCategoryFriend}</SelectItem>
+                  <SelectItem value="colleague">{t.guestCategoryColleague}</SelectItem>
+                  <SelectItem value="other">{t.guestCategoryOther}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Guest names (optional textarea) */}
+            <div className="mt-5 space-y-2">
+              <Label
+                htmlFor="rsvp-guest-names"
+                className="font-cormorant text-xs uppercase tracking-[0.25em] text-navy/70"
+              >
+                {t.guestNames}
+              </Label>
+              <Textarea
+                id="rsvp-guest-names"
+                value={guestNames}
+                onChange={(e) => setGuestNames(e.target.value)}
+                placeholder={t.guestNamesPlaceholder}
+                rows={2}
+                className={`resize-none border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 ${FOCUS_SHADOW}`}
+              />
+            </div>
+
+            {/* Message (optional) */}
             <div className="mt-5 space-y-2">
               <Label
                 htmlFor="rsvp-msg"
@@ -177,7 +238,7 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t.messagePlaceholder}
                 rows={3}
-                className="resize-none border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 focus:shadow-[0_0_0_4px_rgba(200,164,93,0.15),0_8px_20px_-8px_rgba(240,120,0,0.3)]"
+                className={`resize-none border-navy/30 bg-ivory/40 font-body-inv text-navy placeholder:text-navy/35 transition-all focus:border-orange focus:bg-white focus:ring-2 focus:ring-gold/30 ${FOCUS_SHADOW}`}
               />
             </div>
 

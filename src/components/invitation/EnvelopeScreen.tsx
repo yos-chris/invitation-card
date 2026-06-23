@@ -24,9 +24,9 @@ export function EnvelopeScreen({
     const push = (fn: () => void, ms: number) =>
       timers.current.push(setTimeout(fn, ms));
 
+    // Sequence: envelope appears → flap opens → card rises (upright) → focus → ready
     push(() => {
       setPhase("flap");
-      // Play a subtle paper rustle when the flap opens (once)
       if (!rustledRef.current) {
         rustledRef.current = true;
         try {
@@ -36,11 +36,10 @@ export function EnvelopeScreen({
         }
       }
     }, 1300);
-    push(() => setPhase("rise-half"), 2300);
+    push(() => setPhase("rise-half"), 2400);
     push(() => setPhase("rise-full"), 3800);
     push(() => {
       setPhase("focus");
-      // Soft chime when the card reaches focus
       try {
         playChime();
       } catch {
@@ -56,6 +55,7 @@ export function EnvelopeScreen({
   }, []);
 
   const flapOpen = ["flap", "rise-half", "rise-full", "focus", "ready"].includes(phase);
+  const cardRising = ["rise-half", "rise-full", "focus", "ready"].includes(phase);
   const cardClass =
     phase === "enter"
       ? "env-card"
@@ -78,7 +78,6 @@ export function EnvelopeScreen({
     }
   };
 
-  // keyboard accessibility: Enter/Space opens when ready, skips otherwise
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -114,19 +113,20 @@ export function EnvelopeScreen({
           className="relative mx-auto anim-scale-in"
           style={{
             width: "min(440px, 84vw)",
-            // portrait aspect ratio 1410:2000
+            // portrait aspect ratio 1410:2000 (envelope artwork is portrait)
             aspectRatio: "1410 / 2000",
           }}
         >
-          {/* Card layer — behind envelope body, rises from inside */}
+          {/* Card layer — upright, centered. Behind envelope body while hidden (z1),
+              raised to front (z5) once rising so it's never covered by flap/envelope. */}
           <div
             className={cardClass}
             style={{
               position: "absolute",
               inset: 0,
-              zIndex: 1,
+              zIndex: cardRising ? 5 : 1,
               display: "flex",
-              alignItems: "flex-start",
+              alignItems: "center",
               justifyContent: "center",
               pointerEvents: "none",
             }}
@@ -152,14 +152,14 @@ export function EnvelopeScreen({
             </div>
           </div>
 
-          {/* Envelope body (front) */}
+          {/* Envelope body (opaque — hides the card while it's inside) */}
           <div className={baseClass} style={{ position: "absolute", inset: 0, zIndex: 2 }}>
             {/* soft ground shadow */}
             <div
               className="pointer-events-none absolute -bottom-6 left-1/2 h-10 w-[78%] -translate-x-1/2 rounded-[50%] blur-xl"
               style={{ background: "rgba(0,0,0,0.55)" }}
             />
-            <div className="relative h-full w-full anim-float-soft">
+            <div className="relative h-full w-full">
               <div className="pointer-events-none absolute inset-0 border border-gold/40" />
               <img
                 src="/invitation/envelope.png"
@@ -170,7 +170,9 @@ export function EnvelopeScreen({
             </div>
           </div>
 
-          {/* Flap — hinged at top center, opens upward via 3D rotateX */}
+          {/* Flap — CSS navy triangle hinged at top center.
+              z3 normally; lowered to z0 once the card is rising so it can
+              never cover the card. Folds up/back via rotateX(-165deg). */}
           <div
             style={{
               position: "absolute",
@@ -178,8 +180,9 @@ export function EnvelopeScreen({
               left: 0,
               right: 0,
               height: "30%",
-              zIndex: 3,
+              zIndex: cardRising ? 0 : 3,
               transformStyle: "preserve-3d",
+              pointerEvents: "none",
             }}
           >
             <div
@@ -206,17 +209,17 @@ export function EnvelopeScreen({
             </div>
           </div>
 
-          {/* lighting/shadow overlay */}
+          {/* lighting/shadow overlay — subtle, non-blocking */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
               zIndex: 4,
               background:
-                "linear-gradient(180deg, rgba(200,164,93,0.10) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 100%)",
+                "linear-gradient(180deg, rgba(200,164,93,0.08) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 100%)",
             }}
           />
 
-          {/* Cinematic light rays — appear when card is in focus */}
+          {/* Cinematic light rays — appear when card is in focus (behind everything) */}
           {(phase === "focus" || phase === "ready") ? (
             <div
               className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[160%] w-[160%] -translate-x-1/2 -translate-y-1/2"
@@ -229,7 +232,7 @@ export function EnvelopeScreen({
             />
           ) : null}
 
-          {/* Warm card glow in focus phase */}
+          {/* Warm card glow in focus phase (behind card) */}
           {(phase === "focus" || phase === "ready") ? (
             <div
               className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[120%] w-[90%] -translate-x-1/2 -translate-y-1/2"
@@ -245,7 +248,7 @@ export function EnvelopeScreen({
 
         {/* Open Invitation button */}
         <div
-          className={`mt-8 flex flex-col items-center transition-all duration-700 ${
+          className={`relative z-20 mt-8 flex flex-col items-center transition-all duration-700 ${
             showButton ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
           }`}
         >
