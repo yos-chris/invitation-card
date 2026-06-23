@@ -569,3 +569,44 @@ Unresolved issues / risks:
 - Gallery + venue map images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
 - Web Audio ambient music remains a generated pad.
 - The envelope side flap is a CSS navy panel (matching envelope color) rather than extracted from the image — this is intentional since the envelope.png is a single opaque image; the flap reads as the opening mechanism.
+
+---
+Task ID: 14
+Agent: Z.ai Code (revision — landscape envelope asset)
+Task: Use the real landscape envelope asset (envelope copy.png, 2000×1410), no rotation. Triangular right flap, card slides right.
+
+Work Log:
+- User uploaded `envelope copy.png` (2000×1410, genuinely landscape). Copied to `public/invitation/envelope-landscape.png`.
+- VLM analysis confirmed: landscape artwork with lotus in lower-left, logo/text in upper-left, right-side flap opening edge.
+- REBUILT EnvelopeScreen.tsx:
+  - Removed ALL portrait rotation logic. Envelope uses the landscape asset directly with `aspectRatio: "2000 / 1410"` (landscape box, no rotation).
+  - New phase sequence: `appear` (0-1100ms, opacity 0→1 + scale 0.96→1) → `flap` (1100-2100ms, triangular flap opens) → `slide` (2100-3400ms, card slides right) → `focus` (3400-4100ms, envelope recedes) → `ready` (4100ms+, button appears).
+  - Triangular right flap: `clip-path: polygon(0% 50%, 100% 0%, 100% 100%)` (triangle pointing left, apex at left-center). Royal blue gradient (#123083→#1a3f8f→#0e2570) — clearly distinct from the dark navy envelope. Gold edge lines via inline SVG (two `<line>` elements along the hypotenuse, #C8A45D, non-scaling-stroke). Lotus mark centered. Hinged at `transform-origin: right center`, opens via `perspective(1600px) rotateY(-125deg)`, 900ms cubic-bezier(0.22,1,0.36,1). Always z4 (visible); card z5 slides in front.
+  - Card slides RIGHT via translateX (32% desktop / 14% mobile initially, 20% / 8% in focus). Card always UPRIGHT, never rotated. object-fit: contain, max-height 80vh. Hidden behind envelope (z1, opacity 0) until slide phase, then z5 + opacity 1.
+  - Envelope recedes in focus phase: opacity→0.18, blur 1.5px, brightness 0.7, translateX -4%, scale 0.8.
+  - "Open Invitation" button appears at ready phase (z20, clickable, not covered).
+  - No dark transparent overlay anywhere. No boxy blob. No rectangle flap.
+- Background: `.cinema-navy` kept seamless (4 full-viewport radial-gradients, no boxy spotlight). VLM-confirmed.
+- Fixed lint: SSR-safe lazy initializer for mobile detection, no setState-in-effect.
+
+Stage Summary:
+- All 11 final checks:
+  1. No rotate portrait→landscape ✓ (uses real landscape asset)
+  2. Envelope uses landscape asset ✓ (2000×1410, VLM-confirmed "landscape, wider than tall")
+  3. No boxy/vertical blob ✓
+  4. Right flap is TRIANGULAR (clip-path polygon) ✓ (VLM-confirmed "triangular shape, royal blue, gold edges")
+  5. Flap opens like a door from right side ✓ (rotateY -125deg, transform-origin right center)
+  6. Card slides RIGHT ✓ (VLM-confirmed "sliding out to the right")
+  7. Card upright, not cropped, readable ✓ (VLM-confirmed)
+  8. Flap does not cover card ✓ (flap z4, card z5; VLM-confirmed "flap open and not covering the card")
+  9. Background lighting not boxy ✓ (VLM-confirmed "seamless")
+  10. Button appears after animation + clickable ✓
+  11. Premium, not AI-error ✓
+- KEPT INTACT: Google Maps (correct URL), RSVP WhatsApp (no "Halo Marlyne", new fields), no Daftar Isi (0 matches), no auto-popups.
+- Mobile (390×844): card upright, readable, not cropped, no horizontal scroll. VLM-confirmed.
+- Lint clean. Dev server running with no console/runtime errors.
+
+Unresolved issues / risks:
+- Gallery + venue map images are AI-generated stand-ins.
+- Web Audio ambient music remains a generated pad.
+- The triangular flap is a CSS element (royal blue + gold edge) rather than extracted from the envelope image — intentional, since the envelope.png is a single opaque image. The flap reads clearly as the opening mechanism.
