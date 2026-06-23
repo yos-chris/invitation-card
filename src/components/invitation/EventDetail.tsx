@@ -95,11 +95,18 @@ export function EventDetail({ lang }: { lang: Lang }) {
           <FloralSprig width={70} opacity={0.35} />
         </div>
 
-        {/* RSVP phone line */}
+        {/* RSVP phone line — softened navy gradient with glass effect */}
         <Reveal className="mt-6 flex items-center justify-center">
           <div
-            className="flex flex-wrap items-center justify-center gap-3 border border-navy/30 bg-navy px-6 py-3 text-ivory"
-            style={{ boxShadow: "inset 0 0 0 3px #031f44, inset 0 0 0 4px rgba(200,164,93,0.4)" }}
+            className="flex flex-wrap items-center justify-center gap-3 px-6 py-3 text-ivory"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(3,31,68,0.92) 0%, rgba(8,46,92,0.78) 100%)",
+              border: "1px solid rgba(200,164,93,0.35)",
+              borderRadius: "14px",
+              boxShadow: "0 14px 36px rgba(3,31,68,0.16)",
+              backdropFilter: "blur(6px)",
+            }}
           >
             <Phone className="h-4 w-4 text-gold" strokeWidth={1.5} />
             <span className="font-cormorant text-sm uppercase tracking-[0.25em] text-gold">

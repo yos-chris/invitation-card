@@ -645,3 +645,37 @@ Unresolved issues / risks:
 - Gallery + venue map images are AI-generated stand-ins.
 - Web Audio ambient music remains a generated pad.
 - The triangular flap is a CSS element (royal blue + gold edge) — intentional, reads as the opening mechanism.
+
+---
+Task ID: 17
+Agent: Z.ai Code (revision — envelope flap alignment + gold seal + proportions)
+Task: Fix only the envelope animation: flap alignment, trapezoid fold shape, gold seal, fold lines, card proportion. Preserve start + final states.
+
+Work Log:
+- User reported: flap misaligned (offset from envelope edge), flap looks like standalone triangle, no decoration, envelope 2-3x card size.
+- REBUILT flap section in EnvelopeScreen.tsx:
+  - ALIGNMENT FIX: flap now uses `right: 0, top: 0, height: 100%` (was `right: 3%, top: 5%, bottom: 5%`). Verified via DOM: `right: 0px, top: 0px, height: 100%`. No offset from envelope edge.
+  - SHAPE FIX: changed from triangle `polygon(0% 50%, 100% 0%, 100% 100%)` to trapezoid fold `polygon(0 0, 100% 8%, 100% 92%, 0 100%)` — looks like a real envelope flap fold, not a standalone triangle.
+  - WIDTH: 36% of envelope (was 28%) — within the recommended 34-42% range.
+  - GRADIENT: `linear-gradient(135deg, #123083 0%, #031F44 70%, #02152F 100%)` — matches the envelope navy, has depth.
+  - SHADOWS: outer `0 20px 45px rgba(0,0,0,0.22)`, inner `inset 0 0 30px rgba(255,255,255,0.04)`.
+  - FOLD LINES: SVG lines along the top + bottom diagonal fold edges (gold, opacity 0.55), plus a subtle dashed center guideline (opacity 0.18).
+  - GOLD SEAL: premium circular ornament centered on the flap — outer ring (1px gold border + radial gradient), inner ring (0.5px gold), lotus monogram centered (rgba ivory 0.75). Desktop 62px, mobile 42px. VLM-confirmed: "gold-toned circular seal/ornament on the flap."
+  - PAPER GRAIN: subtle noise texture overlay on the flap (opacity 0.20).
+  - ANIMATION: `perspective(1400px) rotateY(-120deg)` when open, 900ms cubic-bezier. Transform-origin: right center. Verified via DOM: `perspective(1400px) rotateY(-120deg)` at flap phase.
+- CARD PROPORTION FIX: card width changed from 75% to 82% of envelope (envelope is now ~1.22x card, was ~1.33x). Card positioned at `left: 9%` (centered inside). Within the recommended 1.18-1.25x envelope-to-card ratio.
+- ENVELOPE SHADOW: added a dedicated shadow layer (z0) behind the envelope base for depth (`0 30px 60px -12px rgba(0,0,0,0.6)`).
+- PRESERVED: start state (landscape envelope, centered, faded in), final state (card focused, envelope receded, button visible), phase sequence, group rotation, all other sections.
+
+Stage Summary:
+- VLM-verified:
+  1. Start: envelope landscape, centered, trapezoid flap aligned to right edge, gold seal visible ✓
+  2. Slide: card slides right, upright, readable, proportional (not 2-3x smaller) ✓
+  3. Final: card focus, envelope receded, button visible ✓
+  4. Mobile: envelope landscape, centered, flap aligned, gold seal visible, no horizontal scroll ✓
+- DOM-verified: flap at right:0, top:0, height:100%, width:36%, rotateY(-120deg) when open ✓
+- Lint clean. Dev server running with no console/runtime errors.
+
+Unresolved issues / risks:
+- Gallery + venue map images are AI-generated stand-ins.
+- Web Audio ambient music remains a generated pad.

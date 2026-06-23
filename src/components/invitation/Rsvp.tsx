@@ -257,10 +257,19 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
               </p>
             </div>
 
-            {/* opened confirmation toast */}
+            {/* opened confirmation toast — softened navy glass */}
             {opened ? (
               <div className="anim-fade-in pointer-events-none absolute -top-3 left-1/2 -translate-x-1/2 -translate-y-full">
-                <div className="flex items-center gap-2 rounded-full border border-gold/60 bg-navy px-4 py-2 text-ivory shadow-xl">
+                <div
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-ivory"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(3,31,68,0.92) 0%, rgba(8,46,92,0.8) 100%)",
+                    border: "1px solid rgba(200,164,93,0.4)",
+                    boxShadow: "0 12px 30px rgba(3,31,68,0.22)",
+                    backdropFilter: "blur(6px)",
+                  }}
+                >
                   <Sparkles className="h-3.5 w-3.5 text-gold" strokeWidth={1.5} />
                   <span className="text-xs tracking-wide">
                     {lang === "id"

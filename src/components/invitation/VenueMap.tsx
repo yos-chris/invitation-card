@@ -2,17 +2,20 @@
 
 import { DICT, type Lang } from "@/lib/i18n";
 import { Reveal } from "./Reveal";
-import { FrameCorners, LotusMark } from "./Ornaments";
 import { MapPin, ExternalLink } from "lucide-react";
 
 const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Golden%20Tulip%20Jineng%20Resort%20Jl.%20Sunset%20Road%20No.98%20Kuta%20Kabupaten%20Badung%20Bali";
 
+// Google Maps embed URL (no API key required for basic place embeds)
+const MAPS_EMBED_URL =
+  "https://www.google.com/maps?q=Golden+Tulip+Jineng+Resort+Jl.+Sunset+Road+No.98+Kuta+Kabupaten+Badung+Bali&output=embed";
+
 export function VenueMap({ lang }: { lang: Lang }) {
   const t = DICT[lang];
   return (
     <Reveal className="mt-10">
-      <div className="relative mx-auto max-w-3xl">
+      <div className="relative mx-auto max-w-4xl">
         {/* heading row */}
         <div className="mb-4 flex items-center justify-center gap-2 text-center">
           <MapPin className="h-4 w-4 text-orange" strokeWidth={1.5} />
@@ -24,46 +27,40 @@ export function VenueMap({ lang }: { lang: Lang }) {
           {t.venueMapHint}
         </p>
 
-        {/* framed map */}
-        <div className="frame-classic relative overflow-hidden bg-white">
-          <FrameCorners color="navy" inset={6} size={28} />
-          <div className="relative">
-            <img
-              src="/invitation/gallery/venue-map.png"
-              alt="Stylized map of Kuta, Bali showing the venue location"
-              className="block w-full select-none object-cover"
-              style={{ maxHeight: "320px" }}
-              draggable={false}
-              loading="lazy"
-            />
-            {/* brand-cohesion overlay */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(3,31,68,0.08) 0%, transparent 30%, transparent 70%, rgba(3,31,68,0.18) 100%)",
-              }}
-            />
-            {/* venue pin marker (centered) */}
-            <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="relative flex flex-col items-center">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-gold bg-navy text-gold shadow-lg"
-                  style={{ animation: "pin-pulse 2s ease-in-out infinite" }}
-                >
-                  <MapPin className="h-5 w-5" strokeWidth={1.5} />
-                </div>
-                <span className="mt-1 h-3 w-px bg-gold/70" />
-              </div>
-            </div>
-            {/* corner compass mark */}
-            <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-1 rounded-full bg-navy/80 px-2.5 py-1 backdrop-blur-sm">
-              <LotusMark width={16} color="#C8A45D" />
-              <span className="font-cormorant text-[9px] uppercase tracking-[0.2em] text-gold/80">
-                N
-              </span>
-            </div>
-          </div>
+        {/* framed Google Maps embed — modern, real map */}
+        <div
+          className="relative overflow-hidden bg-white"
+          style={{
+            border: "1px solid rgba(3,31,68,0.3)",
+            borderRadius: "18px",
+            boxShadow:
+              "0 0 0 4px #f7f3ea, 0 0 0 5px rgba(200,164,93,0.3), 0 18px 50px rgba(3,31,68,0.18)",
+          }}
+        >
+          {/* gold inner accent line */}
+          <div
+            className="pointer-events-none absolute inset-0 z-[2] rounded-[18px]"
+            style={{ border: "1px solid rgba(200,164,93,0.35)" }}
+          />
+          {/* corner ornaments */}
+          <span className="pointer-events-none absolute left-3 top-3 z-[3] h-3 w-3 border-l border-t border-gold/60" />
+          <span className="pointer-events-none absolute right-3 top-3 z-[3] h-3 w-3 border-r border-t border-gold/60" />
+          <span className="pointer-events-none absolute bottom-3 left-3 z-[3] h-3 w-3 border-b border-l border-gold/60" />
+          <span className="pointer-events-none absolute bottom-3 right-3 z-[3] h-3 w-3 border-b border-r border-gold/60" />
+
+          <iframe
+            src={MAPS_EMBED_URL}
+            title="Golden Tulip Jineng Resort location map"
+            className="block w-full"
+            style={{
+              height: "clamp(320px, 48vh, 500px)",
+              border: "0",
+              borderRadius: "16px",
+            }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
         </div>
 
         {/* open in maps button */}
@@ -79,13 +76,6 @@ export function VenueMap({ lang }: { lang: Lang }) {
           </a>
         </div>
       </div>
-
-      <style>{`
-        @keyframes pin-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(240,120,0,0.4); }
-          50% { box-shadow: 0 0 0 10px rgba(240,120,0,0); }
-        }
-      `}</style>
     </Reveal>
   );
 }

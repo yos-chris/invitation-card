@@ -39,7 +39,17 @@ export function ClosingFooter({
   return (
     <footer className="relative mt-auto px-4 pb-10 pt-10">
       <Reveal className="mx-auto max-w-3xl">
-        <div className="frame-classic relative bg-navy px-6 py-12 text-center text-ivory sm:px-12">
+        <div
+          className="frame-classic relative px-6 py-12 text-center text-ivory sm:px-12"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(3,31,68,0.94) 0%, rgba(8,46,92,0.82) 100%)",
+            border: "1px solid rgba(200,164,93,0.35)",
+            borderRadius: "16px",
+            boxShadow: "0 18px 50px rgba(3,31,68,0.18)",
+            backdropFilter: "blur(6px)",
+          }}
+        >
           <FrameCorners color="gold" inset={8} size={36} />
 
           {/* gold corner medallions — clickable easter egg (click all 4 for a burst) */}

@@ -122,6 +122,10 @@ export type Dict = {
   venueBallroom: string;
   venueGarden: string;
   venueLobby: string;
+  // our journey
+  journeyTitle: string;
+  journeySubline: string;
+  journeyIntro: string;
   // table of contents
   tocTitle: string;
   tocOpen: string;
@@ -232,6 +236,9 @@ const en: Dict = {
   venueBallroom: "Ballroom",
   venueGarden: "Garden",
   venueLobby: "Lobby",
+  journeyTitle: "Our Journey",
+  journeySubline: "A glimpse of the moments, care, and togetherness that shaped our first year.",
+  journeyIntro: "Every moment in our first year has been built through care, trust, and togetherness. These memories reflect the people, communities, and shared hopes that have shaped our journey in Bali.",
   tocTitle: "Contents",
   tocOpen: "Open contents",
 };
@@ -341,6 +348,9 @@ const id: Dict = {
   venueBallroom: "Ballroom",
   venueGarden: "Taman",
   venueLobby: "Lobi",
+  journeyTitle: "Perjalanan Kami",
+  journeySubline: "Sekilas momen kebersamaan, kepedulian, dan perjalanan yang membentuk tahun pertama kami.",
+  journeyIntro: "Setiap momen di tahun pertama ini terbentuk dari kepedulian, kepercayaan, dan kebersamaan. Kenangan ini menjadi bagian dari perjalanan kami bersama masyarakat, pasien, keluarga, dan rekan-rekan di Bali.",
   tocTitle: "Daftar Isi",
   tocOpen: "Buka daftar isi",
 };
@@ -450,6 +460,9 @@ const zh: Dict = {
   venueBallroom: "宴会厅",
   venueGarden: "花园",
   venueLobby: "大堂",
+  journeyTitle: "我们的旅程",
+  journeySubline: "回顾这一年中充满关怀、陪伴与温暖的珍贵时刻。",
+  journeyIntro: "这一年的每一个瞬间，都由关怀、信任与陪伴共同组成。这些珍贵回忆，记录了我们与巴厘岛社区、患者、家属及伙伴一路同行的旅程。",
   tocTitle: "目录",
   tocOpen: "打开目录",
 };

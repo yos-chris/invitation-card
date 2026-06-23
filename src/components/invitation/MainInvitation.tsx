@@ -17,7 +17,7 @@ import { BackToTop } from "./BackToTop";
 import { ConfettiBurst } from "./ConfettiBurst";
 import { ScrollProgress } from "./ScrollProgress";
 import { ThankYouCard } from "./ThankYouCard";
-import { VenueGallery } from "./VenueGallery";
+import { OurJourney } from "./OurJourney";
 
 export function MainInvitation({
   lang,
@@ -132,7 +132,7 @@ export function MainInvitation({
         <div id="sec-detail">
           <EventDetail lang={lang} />
           <SectionBridge />
-          <VenueGallery lang={lang} />
+          <OurJourney lang={lang} />
         </div>
         <SectionBridge />
         <div id="sec-gallery">

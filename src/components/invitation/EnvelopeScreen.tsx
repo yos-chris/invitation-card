@@ -8,17 +8,8 @@ import { playPaperRustle, playChime } from "@/lib/sfx";
 
 /*
   Envelope reveal — landscape asset, coordinated group animation.
-
-  START state (preserve): landscape envelope, ~860px wide, centered.
-  FINAL state (preserve): card focused, envelope receded behind.
-
-  Middle animation (the only thing changed):
-  1. appear   — landscape envelope fades + scales in (START state)
-  2. rotate   — whole reveal group rotates to opening position
-  3. flap     — triangular flap opens like a paper fold
-  4. slide    — card slides out (upright), proportional to envelope
-  5. settle   — group rotates back + envelope recedes → FINAL state
-  6. ready    — button appears
+  All layers share ONE coordinate system (the reveal group box).
+  Flap aligns precisely to the right edge of the envelope base.
 */
 type Phase = "appear" | "rotate" | "flap" | "slide" | "settle" | "ready";
 
@@ -36,7 +27,6 @@ export function EnvelopeScreen({
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const rustledRef = useRef(false);
 
-  // SSR-safe lazy initializer for mobile detection
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== "undefined"
       ? window.matchMedia("(max-width: 640px)").matches
@@ -53,33 +43,22 @@ export function EnvelopeScreen({
     const push = (fn: () => void, ms: number) =>
       timers.current.push(setTimeout(fn, ms));
 
-    push(() => setPhase("rotate"), 1100); // group rotates to opening position
+    push(() => setPhase("rotate"), 1100);
     push(() => {
-      setPhase("flap"); // flap opens
+      setPhase("flap");
       if (!rustledRef.current) {
         rustledRef.current = true;
-        try {
-          playPaperRustle();
-        } catch {
-          /* audio unavailable */
-        }
+        try { playPaperRustle(); } catch { /* */ }
       }
     }, 2100);
-    push(() => setPhase("slide"), 3050); // card slides out
+    push(() => setPhase("slide"), 3050);
     push(() => {
-      setPhase("settle"); // group rotates back + envelope recedes
-      try {
-        playChime();
-      } catch {
-        /* audio unavailable */
-      }
+      setPhase("settle");
+      try { playChime(); } catch { /* */ }
     }, 4300);
-    push(() => setPhase("ready"), 5200); // button appears
+    push(() => setPhase("ready"), 5200);
 
-    return () => {
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
-    };
+    return () => { timers.current.forEach(clearTimeout); timers.current = []; };
   }, []);
 
   const flapOpen = ["flap", "slide", "settle", "ready"].includes(phase);
@@ -87,31 +66,26 @@ export function EnvelopeScreen({
   const recede = phase === "settle" || phase === "ready";
   const showButton = phase === "ready";
 
-  // Group rotation: -12° during rotate/flap (opening tilt), back to 0° on settle.
-  // Applied to the whole reveal group so all layers stay aligned.
+  // Group rotation: slight tilt during rotate/flap, back to 0° on settle.
   const groupRotate =
-    phase === "appear" ? 0 : phase === "rotate" || phase === "flap" ? -12 : 0;
+    phase === "appear" ? 0 : phase === "rotate" || phase === "flap" ? -10 : 0;
 
-  // Card slide distance to the right (in % of stage width).
-  // Less on mobile so card stays fully visible.
-  const slideX = isMobile ? (recede ? 8 : 13) : recede ? 18 : 28;
+  // Card slide distance (% of stage width, to the right).
+  const slideX = isMobile ? (recede ? 7 : 12) : recede ? 16 : 26;
 
   const handleStageClick = () => {
-    if (phase === "ready") {
-      onOpen();
-    } else if (phase !== "appear") {
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
+    if (phase === "ready") { onOpen(); }
+    else if (phase !== "appear") {
+      timers.current.forEach(clearTimeout); timers.current = [];
       setPhase("ready");
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleStageClick();
-    }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleStageClick(); }
   };
+
+  // Gold seal size responsive
+  const sealSize = isMobile ? 42 : 62;
 
   return (
     <div
@@ -122,10 +96,7 @@ export function EnvelopeScreen({
       tabIndex={0}
       aria-label={t.tapToOpen}
     >
-      {/* ambient golden dust (very subtle) */}
       <GoldenPetals count={8} opacity={0.14} speed={0.4} />
-
-      {/* faint lotus watermark top-center */}
       <LotusMark
         className="anim-shimmer pointer-events-none absolute left-1/2 top-[8%] -translate-x-1/2 opacity-20"
         width={84}
@@ -133,14 +104,7 @@ export function EnvelopeScreen({
       />
 
       <div className="env-stage relative z-10 flex w-full flex-col items-center">
-        {/*
-          Reveal group — ALL transform (rotate + scale) applied here so every
-          layer (envelope, card, flap, shadow) rotates as one unit. No layer
-          is ever offset from the others.
-          START: scale 0.96, opacity 0 → scale 1, opacity 1 (landscape).
-          During rotate/flap: rotate -12° (opening tilt).
-          FINAL: rotate 0°, scale 0.8 (recede).
-        */}
+        {/* === REVEAL GROUP — all layers share this coordinate system === */}
         <div
           style={{
             width: "min(860px, 88vw)",
@@ -151,23 +115,28 @@ export function EnvelopeScreen({
             position: "relative",
           }}
         >
-          {/*
-            Card — always UPRIGHT (never rotates; only the group rotates, and
-            the card counter-rotates to stay readable... actually since the
-            group rotation is small (-12°) and brief, the card stays upright
-            relative to the group during slide, then the group returns to 0°.
-            Card is proportional to envelope: ~75% of envelope width so the
-            envelope is only ~1.18x the card (not 2-3x).
-            Hidden (z1, opacity 0) behind the opaque envelope until slide.
-          */}
+          {/* --- Envelope shadow (behind everything) --- */}
           <div
             style={{
               position: "absolute",
-              // Card centered vertically; positioned to slide out from inside.
-              left: "12.5%",
+              inset: 0,
+              zIndex: 0,
+              borderRadius: "6px",
+              boxShadow: "0 30px 60px -12px rgba(0,0,0,0.6), 0 0 50px rgba(200,164,93,0.08)",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* --- Invitation card (hidden inside, slides right) ---
+              Card width = ~82% of envelope → envelope is ~1.22x card.
+              Positioned left:9% so it's centered inside the envelope. */}
+          <div
+            style={{
+              position: "absolute",
+              left: "9%",
               top: "50%",
-              width: "75%",
-              transform: `translate(0, -50%) translateX(${cardOut ? `${slideX}%` : "0"}) scale(${recede ? 1.06 : 1})`,
+              width: "82%",
+              transform: `translate(0, -50%) translateX(${cardOut ? `${slideX}%` : "0"}) scale(${recede ? 1.05 : 1})`,
               zIndex: cardOut ? 5 : 1,
               opacity: cardOut ? 1 : 0,
               transition: `transform 1100ms ${EASE}, opacity 800ms ease`,
@@ -195,8 +164,7 @@ export function EnvelopeScreen({
             </div>
           </div>
 
-          {/* Envelope landscape image — opaque, hides the card while inside.
-              Recedes (fade + blur) in settle phase. */}
+          {/* --- Envelope base image (opaque, hides card) --- */}
           <div
             style={{
               position: "absolute",
@@ -216,48 +184,102 @@ export function EnvelopeScreen({
             />
           </div>
 
-          {/*
-            Right triangular flap — paper-fold shape (trapezoid-ish triangle).
-            clip-path triangle, royal blue + gold edge. Hinged at right center.
-            Opens AFTER the group rotate settles (flap phase). z4 always;
-            card z5 slides in front.
-          */}
+          {/* --- Right flap (triangular fold, aligned to right edge) ---
+              Position: right:0, top:0, height:100% — perfectly aligned
+              with the envelope base. Width ~36% of envelope.
+              Shape: trapezoid fold via clip-path.
+              Hinged at right center; opens via rotateY. */}
           <div
             style={{
               position: "absolute",
-              right: "3%",
-              top: "5%",
-              bottom: "5%",
-              width: "28%",
+              right: 0,
+              top: 0,
+              height: "100%",
+              width: "36%",
               zIndex: 4,
               transformOrigin: "right center",
-              transform: `perspective(1600px) rotateY(${flapOpen ? -125 : 0}deg)`,
-              transition: `transform 850ms ${EASE}, opacity 700ms ease`,
-              opacity: flapOpen ? 0.82 : 1,
-              clipPath: "polygon(0% 50%, 100% 0%, 100% 100%)",
+              transform: `perspective(1400px) rotateY(${flapOpen ? -120 : 0}deg)`,
+              transition: `transform 900ms ${EASE}, opacity 700ms ease`,
+              opacity: flapOpen ? 0.88 : 1,
+              // Trapezoid fold shape — like a real envelope flap
+              clipPath: "polygon(0 0, 100% 8%, 100% 92%, 0 100%)",
               background:
-                "linear-gradient(135deg, #123083 0%, #1a3f8f 40%, #0e2570 100%)",
-              filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.5))",
+                "linear-gradient(135deg, #123083 0%, #031F44 70%, #02152F 100%)",
+              boxShadow: "0 20px 45px rgba(0,0,0,0.22)",
               backfaceVisibility: "hidden",
             }}
           >
-            {/* Gold fold edges (hypotenuse lines) */}
+            {/* Gold border via SVG (works with clip-path) */}
             <svg
               className="absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              <line x1="0" y1="50" x2="100" y2="0" stroke="#C8A45D" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity="0.85" />
-              <line x1="0" y1="50" x2="100" y2="100" stroke="#C8A45D" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity="0.85" />
+              {/* Fold edge lines (the two diagonal lines forming the flap fold) */}
+              <line x1="0" y1="0" x2="100" y2="8" stroke="#C8A45D" strokeWidth="0.8" vectorEffect="non-scaling-stroke" opacity="0.55" />
+              <line x1="0" y1="100" x2="100" y2="92" stroke="#C8A45D" strokeWidth="0.8" vectorEffect="non-scaling-stroke" opacity="0.55" />
+              {/* Inner fold guideline (subtle, from left edge midpoint to right) */}
+              <line x1="0" y1="50" x2="100" y2="50" stroke="#C8A45D" strokeWidth="0.4" vectorEffect="non-scaling-stroke" opacity="0.18" strokeDasharray="2 3" />
             </svg>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <LotusMark width={28} color="#C8A45D" className="opacity-60" />
+
+            {/* Inner shadow for depth */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                clipPath: "polygon(0 0, 100% 8%, 100% 92%, 0 100%)",
+                boxShadow: "inset 0 0 30px rgba(255,255,255,0.04)",
+              }}
+            />
+
+            {/* === GOLD SEAL — premium circular ornament on the flap === */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{
+                width: `${sealSize}px`,
+                height: `${sealSize}px`,
+              }}
+            >
+              {/* Outer ring */}
+              <div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: "1px solid rgba(200,164,93,0.75)",
+                  background:
+                    "radial-gradient(circle, rgba(200,164,93,0.18) 0%, rgba(200,164,93,0.04) 70%, transparent 100%)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                }}
+              />
+              {/* Inner ring */}
+              <div
+                className="absolute rounded-full"
+                style={{
+                  inset: "5px",
+                  border: "0.5px solid rgba(200,164,93,0.5)",
+                }}
+              />
+              {/* Lotus monogram centered in the seal */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <LotusMark
+                  width={Math.round(sealSize * 0.42)}
+                  color="rgba(247,243,234,0.75)"
+                />
+              </div>
             </div>
+
+            {/* Subtle paper grain on the flap */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-20"
+              style={{
+                clipPath: "polygon(0 0, 100% 8%, 100% 92%, 0 100%)",
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
+              }}
+            />
           </div>
         </div>
 
-        {/* Open Invitation button — appears only when ready */}
+        {/* Open Invitation button */}
         <div
           className={`relative z-20 mt-8 flex flex-col items-center transition-all duration-400 ${
             showButton ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
@@ -265,10 +287,7 @@ export function EnvelopeScreen({
         >
           <ClassicDivider className="mb-4 w-56" color="#C8A45D" />
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpen();
-            }}
+            onClick={(e) => { e.stopPropagation(); onOpen(); }}
             className="btn-pill solid-navy px-7 text-sm uppercase tracking-[0.2em]"
           >
             {t.openInvitation}
@@ -279,7 +298,6 @@ export function EnvelopeScreen({
         </div>
       </div>
 
-      {/* corner ornaments in gold */}
       <div className="pointer-events-none absolute left-3 top-3 hidden sm:block">
         <LotusMark width={40} color="#C8A45D" />
       </div>
