@@ -74,6 +74,19 @@ export type Dict = {
   attireValue: string;
   // section nav labels
   navHero: string;
+  // guestbook
+  guestbookTitle: string;
+  guestbookIntro: string;
+  wishName: string;
+  wishNamePlaceholder: string;
+  wishMessage: string;
+  wishMessagePlaceholder: string;
+  wishSubmit: string;
+  wishEmpty: string;
+  wishFrom: string;
+  guestbookCount: (n: number) => string;
+  backToTop: string;
+  print: string;
 };
 
 const en: Dict = {
@@ -139,6 +152,18 @@ const en: Dict = {
   attireLabel: "Attire",
   attireValue: "Formal · Batik welcome",
   navHero: "Invitation",
+  guestbookTitle: "Wishes & Greetings",
+  guestbookIntro: "Leave a warm wish for our first anniversary.",
+  wishName: "Name",
+  wishNamePlaceholder: "Your name",
+  wishMessage: "Your wish",
+  wishMessagePlaceholder: "Share a heartfelt message…",
+  wishSubmit: "Send wish",
+  wishEmpty: "No wishes yet. Be the first to leave one.",
+  wishFrom: "— from",
+  guestbookCount: (n) => `${n} wish${n === 1 ? "" : "es"}`,
+  backToTop: "Back to top",
+  print: "Print invitation",
 };
 
 const id: Dict = {
@@ -204,6 +229,18 @@ const id: Dict = {
   attireLabel: "Busana",
   attireValue: "Formal · Batik diterima",
   navHero: "Undangan",
+  guestbookTitle: "Ucapan & Doa",
+  guestbookIntro: "Tinggalkan ucapan hangat untuk ulang tahun pertama kami.",
+  wishName: "Nama",
+  wishNamePlaceholder: "Nama Anda",
+  wishMessage: "Ucapan Anda",
+  wishMessagePlaceholder: "Bagikan pesan tulus…",
+  wishSubmit: "Kirim ucapan",
+  wishEmpty: "Belum ada ucapan. Jadilah yang pertama.",
+  wishFrom: "— dari",
+  guestbookCount: (n) => `${n} ucapan`,
+  backToTop: "Kembali ke atas",
+  print: "Cetak undangan",
 };
 
 const zh: Dict = {
@@ -269,6 +306,18 @@ const zh: Dict = {
   attireLabel: "着装",
   attireValue: "正装 · 欢迎穿着巴迪克",
   navHero: "邀请函",
+  guestbookTitle: "祝福与寄语",
+  guestbookIntro: "为我们的一周年纪念留下温暖的祝福。",
+  wishName: "姓名",
+  wishNamePlaceholder: "您的姓名",
+  wishMessage: "您的祝福",
+  wishMessagePlaceholder: "分享一段真挚的话…",
+  wishSubmit: "发送祝福",
+  wishEmpty: "还没有祝福。成为第一个留言的人。",
+  wishFrom: "—来自",
+  guestbookCount: (n) => `${n} 条祝福`,
+  backToTop: "回到顶部",
+  print: "打印邀请函",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };

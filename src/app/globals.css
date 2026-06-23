@@ -370,6 +370,15 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Envelope cinematic light rays + card glow */
+@keyframes env-rays {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes env-glow {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -378,5 +387,44 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===================== Print styles ===================== */
+@media print {
+  /* Hide all interactive/non-essential UI */
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+  /* Force light background + black text for printing */
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .paper-ivory,
+  .paper-ivory-soft {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+  /* Ensure colors print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Reset the fixed viewport frame so it doesn't overlap */
+  .print-reset {
+    position: static !important;
+    inset: auto !important;
+  }
+  /* Avoid breaking inside cards/sections */
+  section,
+  article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Generous page margins */
+  @page {
+    margin: 1.5cm;
   }
 }

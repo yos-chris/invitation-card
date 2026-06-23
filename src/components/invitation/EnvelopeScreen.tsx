@@ -185,6 +185,32 @@ export function EnvelopeScreen({
                 "linear-gradient(180deg, rgba(200,164,93,0.10) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 100%)",
             }}
           />
+
+          {/* Cinematic light rays — appear when card is in focus */}
+          {(phase === "focus" || phase === "ready") ? (
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[160%] w-[160%] -translate-x-1/2 -translate-y-1/2"
+              style={{
+                background:
+                  "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(200,164,93,0.12) 8deg, transparent 16deg, transparent 40deg, rgba(200,164,93,0.10) 48deg, transparent 56deg, transparent 90deg, rgba(200,164,93,0.12) 98deg, transparent 106deg, transparent 180deg, rgba(200,164,93,0.10) 188deg, transparent 196deg, transparent 270deg, rgba(200,164,93,0.12) 278deg, transparent 286deg)",
+                animation: "env-rays 12s linear infinite",
+                opacity: 0.9,
+              }}
+            />
+          ) : null}
+
+          {/* Warm card glow in focus phase */}
+          {(phase === "focus" || phase === "ready") ? (
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[120%] w-[90%] -translate-x-1/2 -translate-y-1/2"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(200,164,93,0.28) 0%, rgba(240,120,0,0.10) 35%, transparent 70%)",
+                filter: "blur(6px)",
+                animation: "env-glow 3s ease-in-out infinite",
+              }}
+            />
+          ) : null}
         </div>
 
         {/* Open Invitation button */}

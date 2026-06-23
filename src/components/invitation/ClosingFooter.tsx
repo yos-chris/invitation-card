@@ -3,6 +3,7 @@
 import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FrameCorners, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
+import { Printer } from "lucide-react";
 
 export function ClosingFooter({
   lang,
@@ -54,6 +55,17 @@ export function ClosingFooter({
           >
             {t.replayInvitation}
           </button>
+
+          {/* Action row: replay + print (hidden when printing) */}
+          <div className="no-print mt-4 flex items-center justify-center gap-5">
+            <button
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 font-cormorant text-xs uppercase tracking-[0.25em] text-ivory/60 underline-offset-4 transition-colors hover:text-gold hover:underline"
+            >
+              <Printer className="h-3.5 w-3.5" strokeWidth={1.5} />
+              {t.print}
+            </button>
+          </div>
 
           {/* decorative bottom flourish */}
           <FloralSprig

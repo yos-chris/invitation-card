@@ -7,11 +7,14 @@ import { Countdown } from "./Countdown";
 import { EventDetail } from "./EventDetail";
 import { Gallery } from "./Gallery";
 import { Rsvp } from "./Rsvp";
+import { Guestbook } from "./Guestbook";
 import { ClosingFooter } from "./ClosingFooter";
 import { FrameCorners, FloralSprig } from "./Ornaments";
 import { SectionBridge } from "./SectionBridge";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SectionNav } from "./SectionNav";
+import { BackToTop } from "./BackToTop";
+import { ConfettiBurst } from "./ConfettiBurst";
 
 export function MainInvitation({
   lang,
@@ -24,6 +27,8 @@ export function MainInvitation({
 }) {
   const t = DICT[lang];
   const [showScrollHint, setShowScrollHint] = useState(true);
+  const [confettiKey, setConfettiKey] = useState(0);
+  const [fireConfetti, setFireConfetti] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -33,30 +38,42 @@ export function MainInvitation({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const triggerConfetti = () => {
+    setFireConfetti(false);
+    // re-arm on next tick so the effect re-runs
+    requestAnimationFrame(() => {
+      setConfettiKey((k) => k + 1);
+      setFireConfetti(true);
+    });
+  };
+
   return (
     <div className="paper-ivory relative flex min-h-[100dvh] w-full flex-col">
+      {/* Confetti burst overlay (keyed so it can re-fire) */}
+      <ConfettiBurst key={confettiKey} fire={fireConfetti} />
+
       {/* decorative viewport frame */}
-      <div className="pointer-events-none fixed inset-2 z-40 border border-navy/25 sm:inset-4" />
-      <div className="pointer-events-none fixed inset-[10px] z-40 border border-gold/30 sm:inset-[18px]" />
-      <div className="pointer-events-none fixed inset-0 z-40 hidden">
+      <div className="no-print pointer-events-none fixed inset-2 z-40 border border-navy/25 sm:inset-4" />
+      <div className="no-print pointer-events-none fixed inset-[10px] z-40 border border-gold/30 sm:inset-[18px]" />
+      <div className="no-print pointer-events-none fixed inset-0 z-40 hidden">
         <FrameCorners color="gold" inset={20} size={40} />
       </div>
 
       {/* floral side accents (desktop) */}
       <FloralSprig
-        className="pointer-events-none fixed left-2 top-1/3 hidden -rotate-12 lg:block"
+        className="no-print pointer-events-none fixed left-2 top-1/3 hidden -rotate-12 lg:block"
         width={140}
         opacity={0.1}
       />
       <FloralSprig
-        className="pointer-events-none fixed right-2 top-1/2 hidden rotate-12 lg:block"
+        className="no-print pointer-events-none fixed right-2 top-1/2 hidden rotate-12 lg:block"
         width={140}
         opacity={0.1}
       />
 
       {/* scroll hint */}
       <div
-        className={`pointer-events-none fixed bottom-5 left-1/2 z-50 -translate-x-1/2 transition-opacity duration-700 ${
+        className={`no-print pointer-events-none fixed bottom-5 left-1/2 z-50 -translate-x-1/2 transition-opacity duration-700 ${
           showScrollHint ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -71,10 +88,19 @@ export function MainInvitation({
       </div>
 
       {/* language switcher (bottom-left) */}
-      <LanguageSwitcher lang={lang} onChange={onLangChange} />
+      <div className="no-print">
+        <LanguageSwitcher lang={lang} onChange={onLangChange} />
+      </div>
 
       {/* section navigation dots (desktop right) */}
-      <SectionNav lang={lang} />
+      <div className="no-print">
+        <SectionNav lang={lang} />
+      </div>
+
+      {/* back to top button (appears on scroll) */}
+      <div className="no-print">
+        <BackToTop lang={lang} />
+      </div>
 
       <main className="relative z-10 flex flex-1 flex-col">
         <div id="top">
@@ -91,7 +117,8 @@ export function MainInvitation({
         </div>
         <SectionBridge />
         <div id="sec-rsvp">
-          <Rsvp lang={lang} />
+          <Rsvp lang={lang} onConfirm={triggerConfetti} />
+          <Guestbook lang={lang} />
         </div>
         <ClosingFooter lang={lang} onReplay={onReplay} />
       </main>

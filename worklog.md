@@ -172,3 +172,45 @@ Unresolved issues / risks:
 - Web Audio ambient music remains a generated pad.
 - The loading splash auto-dismisses quickly (600ms–2.2s) so it's only visible briefly on load — intentional, but means it's hard to capture in a static screenshot.
 - Recommended next steps: (1) add a "wishes/guestbook" textarea integrated into the RSVP section with localStorage persistence; (2) add subtle gold confetti burst when the envelope fully opens; (3) add a "back to top" floating button on long scroll; (4) consider a print-optimized stylesheet for guests who want a printed invitation.
+
+---
+Task ID: 5
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + guestbook/wishes + confetti + back-to-top + print + envelope cinematic enrichment.
+
+Work Log:
+- Reviewed worklog (Tasks 1–4) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified top missing features: guestbook/wishes, confetti celebration, back-to-top, print, richer envelope cinematic feel.
+- NEW COMPONENTS created in `src/components/invitation/`:
+  - `Guestbook.tsx` — "Wishes & Greetings" section integrated below RSVP. Form (name + message + send wish) with validation. Wishes persist to localStorage (`bali-anniversary-wishes-v1`). 3 elegant seed wishes (Indonesian/English/Mandarin) so it's never empty on first visit. Each wish card: navy avatar with quote icon, name, relative timestamp (localized: "3d ago"/"3 hari lalu"/"3天前"), italic message in quotes, heart accent. New wishes get an orange ring highlight for 2.5s. Scrollable list (max-h-460px, custom scrollbar). Wish count shown. SSR-safe hydration via useState initializer. Effect syncs user wishes (non-seed) to localStorage on change.
+  - `ConfettiBurst.tsx` — lightweight canvas confetti in the invitation palette (gold/navy/orange/ivory). 120 particles from two origins (top-left + top-right), 3 shapes (rect/circle/petal), physics (gravity + drag + rotation), fade-out by life. Keyed so it can re-fire. Triggered on RSVP confirm.
+  - `BackToTop.tsx` — fixed bottom-right button (ArrowUp icon + label) that appears after scrolling 80% of viewport height. Smooth-scrolls to top. Fades in/out with translate.
+- NEW FEATURES:
+  - **Guestbook/wishes** with localStorage persistence — fully i18n (id/en/zh). Verified: submitted "QA Tester" wish persisted across page reload, appeared at top with count "4 wishes".
+  - **Confetti celebration** on RSVP confirm — fires a burst across the screen when the user confirms via WhatsApp.
+  - **Back-to-top button** — verified: scrolled from 4190 → 0 on click.
+  - **Print-optimized stylesheet** — `@media print` rules hide `.no-print` UI (section nav, language switcher, back-to-top, scroll hint, decorative frames, replay/print buttons), force white background, preserve colors (`print-color-adjust: exact`), avoid breaking inside sections, generous 1.5cm page margins. Print button added to footer (localized: "Print invitation"/"Cetak undangan"/"打印邀请函").
+  - **Envelope cinematic enrichment** — during focus/ready phases: animated rotating conic-gradient light rays (12s rotation) + pulsing warm radial card glow (3s breathe). Added `env-rays` and `env-glow` keyframes to globals.css.
+- ENHANCED existing components:
+  - `Rsvp.tsx` — added optional `onConfirm` callback prop, fired after WhatsApp open (triggers confetti).
+  - `MainInvitation.tsx` — added `<ConfettiBurst>` (keyed, re-fireable), `<Guestbook>` inside the RSVP section div, `<BackToTop>`, confetti state machine (`fireConfetti` + `confettiKey`). Marked all fixed UI elements with `no-print`.
+  - `ClosingFooter.tsx` — added Print button (Printer icon) in a `.no-print` action row.
+- i18n (`src/lib/i18n.ts`) — added 12 new keys per language: guestbookTitle, guestbookIntro, wishName, wishNamePlaceholder, wishMessage, wishMessagePlaceholder, wishSubmit, wishEmpty, wishFrom, guestbookCount (function), backToTop, print.
+- `globals.css` — added `env-rays`/`env-glow` keyframes + full `@media print` block.
+
+Stage Summary:
+- All new features verified via agent-browser:
+  1. Guestbook renders with form, 3 seed wishes, wish count. Submitting "QA Tester" wish persisted to localStorage and survived reload; appeared at top with "4 wishes" count. ✓
+  2. Confetti burst fires on RSVP confirm (canvas overlay, palette-colored particles). ✓
+  3. Back-to-top button appears on scroll; click scrolled from 4190 → 0. ✓
+  4. Print button present in footer ("PRINT INVITATION"); print stylesheet hides non-essential UI. ✓
+  5. Envelope light rays + card glow animate during focus phase. ✓
+  6. Mobile (390×844): guestbook form usable, wish cards readable, no horizontal scroll. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. Guestbook is integrated INTO the RSVP section (not a new section). Confetti/back-to-top/print are utility controls / micro-interactions. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery images remain AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes are stored per-browser (localStorage) — not shared across devices. This is intentional for a static invitation site without a backend; a real backend would require an API + moderation.
+- Recommended next steps: (1) add a subtle ambient sound effect (paper rustle) synchronized with the envelope flap opening; (2) add a "save the date" reminder button (e.g., browser notification permission + scheduled reminder); (3) add keyboard accessibility for the envelope stage (Enter to open); (4) consider a "dress code inspiration" mini-gallery (batik patterns) within the event detail.
