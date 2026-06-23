@@ -514,3 +514,58 @@ Unresolved issues / risks:
 - Web Audio ambient music remains a generated pad.
 - Guestbook wishes + reminder state are per-browser (localStorage).
 - The TableOfContents.tsx file still exists but is no longer imported/used (harmless dead code; can be deleted later).
+
+---
+Task ID: 13
+Agent: Z.ai Code (revision request — envelope + background lighting)
+Task: Rebuild envelope animation (landscape→stand→side flap→card slides right→focus→button) + fix boxy background lighting to seamless full-screen.
+
+Work Log:
+- User reported: boxy/cropped spotlight in background, envelope looks like plain vertical box, flap weird, card should slide RIGHT not up.
+- BACKGROUND LIGHTING FIX (globals.css):
+  - Rewrote `.cinema-navy` with 4 layered full-viewport radial-gradients: warm beam from top-left (95%×75%), royal blue glow bottom-right (90%×70%), subtle center warmth (80%×60%), full-screen vignette (transparent 40% → dark 100%). All seamless, no hard edges, no boxy div.
+  - Removed the `.spotlight` CSS class entirely (was the boxy cropped light: a 60%×50% ellipse in a positioned div). The boxy `<div className="spotlight">` element was removed from EnvelopeScreen.
+  - VLM-confirmed: "background is navy with seamless soft lighting (no boxy/cropped light square)."
+- ENVELOPE ANIMATION REBUILD (EnvelopeScreen.tsx + globals.css):
+  - Removed old `.env-flap`/`.env-card.*`/`.env-base.*` CSS classes (top-flap rotateX + card rise-up). Replaced with inline-style-driven 5-step sequence.
+  - New phase sequence: `landscape` (0-1100ms) → `stand` (1100-2400ms) → `flap` (2400-3300ms) → `slide` (3300-4600ms) → `focus` (4600-5400ms) → `ready` (5400ms+).
+  - STEP 1 (landscape): envelope image rotated 90° (landscape/horizontal), scale 0.94, scale-in entrance. Card hidden (opacity 0, z1 behind opaque envelope). Verified via computed transform: `matrix(0, 0.94, -0.94, 0, 0, 0)` = rotate(90°) scale(0.94).
+  - STEP 2 (stand): envelope rotates 90°→0° (upright), 1100ms cubic-bezier(0.22,1,0.36,1). Card still hidden.
+  - STEP 3 (flap): side flap (right edge, 30% width, navy gradient matching envelope, gold hinge crease + lotus mark) opens via `perspective(1400px) rotateY(-115deg)`, transform-origin: right center, 850ms. Swings outward to the right like a door. z3→z0 when open so it never covers the card.
+  - STEP 4 (slide): card slides RIGHT via translateX (26% desktop / 10% mobile), fades in (opacity 0→1), z1→z5 (front). Card always UPRIGHT (never rotates). VLM-confirmed: "card slides horizontally to the right, upright, not tilted, readable, not cropped, no dark overlay, flap not covering."
+  - STEP 5 (focus): envelope recedes (opacity→0.16, scale 0.82, blur 1.5px, brightness 0.7). Card scale 1.05, translateX 16% (desktop) / 6% (mobile, more centered).
+  - STEP 6 (ready): "Open Invitation" button appears below (z20, clickable, not covered). VLM-confirmed: "card is main focus, envelope faded behind, button visible."
+  - Card rules honored: upright, object-fit contain, max-height 80vh, logo top + RSVP bottom not cropped, no dark transparent overlay, no flap covering.
+  - Layering: background (z0) → seamless lighting (cinema-navy) → card hidden (z1) → envelope image (z2) → flap (z3, →z0 when open) → card sliding (z5) → button (z20).
+  - Envelope.png used as-is (no new image, no crop, no stretch, object-fit contain). Card uses cardFor(lang) (front paGe for en/id, back page for zh).
+- KEPT INTACT (verified no regression):
+  - Google Maps: correct URL `https://www.google.com/maps/search/?api=1&query=Golden%20Tulip%20Jineng%20Resort%20Jl.%20Sunset%20Road%20No.98%20Kuta%20Kabupaten%20Badung%20Bali`, target=_blank, rel=noopener noreferrer.
+  - RSVP WhatsApp: no "Halo Marlyne", starts with confirmation sentence, includes Guest category + Guest names fields, "—" for empty optionals, encodeURIComponent applied. Verified EN message.
+  - No "Daftar Isi" (0 matches).
+  - No auto-popup modals (SaveDate only on click, ThankYouCard only after RSVP).
+  - All buttons clickable, no blocking overlays.
+- Mobile (390×844): card upright, readable, not cropped, seamless background, no horizontal scroll, button appears. VLM-confirmed.
+
+Stage Summary:
+- All 15 final quality checks from user's request:
+  1. Background lighting full-screen, no boxy crop ✓
+  2. Envelope appears landscape/horizontal first ✓ (verified rotate 90°)
+  3. Envelope rotates/stands up smoothly ✓ (1100ms cubic-bezier)
+  4. Envelope opens from the wide/side (flap rotateY) ✓
+  5. Card slides out to the RIGHT ✓
+  6. Card upright, not cropped, readable ✓
+  7. Flap does not cover card ✓ (z0 when open)
+  8. No dark overlay in front of card ✓
+  9. "Open Invitation" button appears after card finishes ✓
+  10. All buttons clickable ✓
+  11. Google Maps redirect correct ✓
+  12. WhatsApp message matches new format ✓
+  13. Floating "Daftar Isi" gone ✓
+  14. Mobile + desktop clean ✓
+  15. Premium/cinematic, not AI-template ✓
+- Lint clean. Dev server running with no console/runtime errors.
+
+Unresolved issues / risks:
+- Gallery + venue map images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- The envelope side flap is a CSS navy panel (matching envelope color) rather than extracted from the image — this is intentional since the envelope.png is a single opaque image; the flap reads as the opening mechanism.

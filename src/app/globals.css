@@ -129,9 +129,14 @@
 .cinema-navy {
   background-color: #031f44;
   background-image:
-    radial-gradient(ellipse at 50% 42%, rgba(200, 164, 93, 0.14), transparent 60%),
-    radial-gradient(ellipse at 50% 50%, rgba(18, 48, 131, 0.55), transparent 72%),
-    radial-gradient(circle at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+    /* soft warm light beam from top-left, seamless */
+    radial-gradient(ellipse 95% 75% at 12% 10%, rgba(200, 164, 93, 0.13), transparent 55%),
+    /* royal blue glow from bottom-right */
+    radial-gradient(ellipse 90% 70% at 88% 90%, rgba(18, 48, 131, 0.22), transparent 58%),
+    /* subtle center warmth, very wide so no hard edge */
+    radial-gradient(ellipse 80% 60% at 50% 48%, rgba(200, 164, 93, 0.05), transparent 65%),
+    /* full-screen vignette — darkens edges naturally */
+    radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.52) 100%);
 }
 
 .cinema-grain::after {
@@ -279,71 +284,13 @@
 .anim-float-soft { animation: float-soft 7s ease-in-out infinite; }
 .anim-shimmer { animation: shimmer-slow 4s ease-in-out infinite; }
 
-/* Envelope animation specifics */
+/* Envelope animation — stage with 3D perspective for the side flap */
 .env-stage {
-  perspective: 1800px;
-  perspective-origin: 50% 45%;
+  perspective: 2000px;
+  perspective-origin: 50% 50%;
 }
 
-/* 3D flap open — hinged at top center, folds up/backward.
-   Uses perspective so the rotateX feels 3D. Once open it folds behind
-   the card area (card z-index is raised during rise). */
-.env-flap {
-  transform-origin: top center;
-  transform: perspective(1200px) rotateX(0deg);
-  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  backface-visibility: hidden;
-}
-.env-flap.open {
-  transform: perspective(1200px) rotateX(-165deg);
-}
-
-/* Card — hidden inside envelope, rises UPRIGHT (no rotation).
-   Starts centered, low z-index (behind envelope body). When rising,
-   z-index is raised so the card is in front of the envelope + flap.
-   Modest translateY so the whole card stays visible & readable. */
-.env-card {
-  transform: translateY(6%) scale(1);
-  opacity: 0;
-  transition:
-    transform 1300ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 800ms ease;
-}
-.env-card.rise-half {
-  transform: translateY(-10%) scale(1.02);
-  opacity: 1;
-}
-.env-card.rise-full {
-  transform: translateY(-18%) scale(1.05);
-  opacity: 1;
-}
-.env-card.focus {
-  transform: translateY(-24%) scale(1.08);
-  opacity: 1;
-}
-
-.env-base {
-  transition:
-    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 900ms ease,
-    filter 900ms ease;
-}
-.env-base.recede {
-  transform: scale(0.9) translateY(12px);
-  opacity: 0.35;
-  filter: brightness(0.6) blur(1.5px);
-}
-
-/* Spotlight behind envelope */
-.spotlight {
-  background: radial-gradient(
-    ellipse 60% 50% at 50% 45%,
-    rgba(200, 164, 93, 0.32),
-    rgba(18, 48, 131, 0.18) 45%,
-    transparent 70%
-  );
-  filter: blur(8px);
-}
+/* (Boxy spotlight removed — background lighting is now seamless via .cinema-navy) */
 
 /* Custom scrollbar */
 .fancy-scroll {
