@@ -756,3 +756,22 @@ Stage Summary:
 - Only the last English text line "MODERN CANCER HOSPITAL GUANGZHOU" is kept (Chinese text removed).
 - Left infinity emblem and right circular seal preserved (in white).
 - Visible on both light (ivory) and dark (navy) backgrounds across the site.
+
+---
+Task ID: 20
+Agent: Z.ai Code (revision — white logo with Chinese characters kept)
+Task: Keep the Chinese characters (广州现代肿瘤医院) in the white logo. Do not remove or translate any text.
+
+Work Log:
+- User correction: the Chinese characters must NOT be removed. The logo should be all white but keep ALL original text (Chinese + English) and elements.
+- Updated `scripts/make-logo-white.mjs`: removed the masking logic that was zeroing out the Chinese text area. Now ALL opaque pixels become pure white (RGB 255) with alpha preserved — the entire logo (infinity emblem + Chinese text 广州现代肿瘤医院 + English text MODERN CANCER HOSPITAL GUANGZHOU + circular seal) is converted to white on transparent background. No text removed, no translation.
+- Logo references already point to `/invitation/logo-white.png` from Task 19 (LanguageScreen, Hero, ClosingFooter, SaveDate, layout favicon).
+- VLM-verified on actual site (language screen): "logo is white, shows BOTH Chinese characters 广州现代肿瘤医院 AND English text MODERN CANCER HOSPITAL GUANGZHOU, infinity emblem left, circular seal right, all white" ✓
+- Lint clean. Dev server running with no errors.
+
+Stage Summary:
+- Logo is now all white (pure #FFFFFF on transparent background).
+- Chinese characters 广州现代肿瘤医院 are KEPT (not removed, not translated).
+- English text MODERN CANCER HOSPITAL GUANGZHOU is kept.
+- Infinity emblem + circular seal preserved in white.
+- Visible on both ivory and navy backgrounds across the site.
