@@ -610,3 +610,38 @@ Unresolved issues / risks:
 - Gallery + venue map images are AI-generated stand-ins.
 - Web Audio ambient music remains a generated pad.
 - The triangular flap is a CSS element (royal blue + gold edge) rather than extracted from the envelope image — intentional, since the envelope.png is a single opaque image. The flap reads clearly as the opening mechanism.
+
+---
+Task ID: 15
+Agent: Z.ai Code (revision — middle animation only)
+Task: Fix only the middle envelope animation (rotate group → flap → card slide → settle). Preserve start + final states.
+
+Work Log:
+- User: start + final states are already correct. Only the middle animation is broken (envelope 2-3x card size, boxy blob, card comes out wrong).
+- Captured reference screenshots of current START (landscape envelope, ~860px, centered) and FINAL (card focused, envelope receded, button) states for preservation.
+- REBUILT middle animation in EnvelopeScreen.tsx:
+  - New phase sequence: `appear` (0-1100ms) → `rotate` (1100-2100ms) → `flap` (2100-3050ms) → `slide` (3050-4300ms) → `settle` (4300-5200ms) → `ready` (5200ms+).
+  - STEP 1 (appear): unchanged — landscape envelope fades + scales in (START state preserved).
+  - STEP 2 (rotate): the ENTIRE reveal group (envelope + card + flap + shadow) rotates as ONE unit via a single `transform: rotate(-12deg)` on the parent wrapper. No layer is rotated individually — all stay aligned. Card stays hidden (opacity 0, z1). VLM-confirmed: "envelope and flap appear as a single unit, slightly tilted."
+  - STEP 3 (proportional sizing): card width set to 75% of the stage (envelope), so the envelope is only ~1.18x the card width — not 2-3x. Card positioned at left 12.5%, vertically centered. The envelope properly "contains" the card.
+  - STEP 4 (flap): triangular flap (clip-path polygon, royal blue + gold edge) opens via `rotateY(-125deg)`, transform-origin right center, 850ms — only AFTER the group rotate settles. VLM-confirmed: "triangular flap opening to the right."
+  - STEP 5 (slide): card slides RIGHT via translateX (28% desktop / 13% mobile), upright, readable, opacity 0→1, z1→z5. VLM-confirmed: "card sliding out to the right, upright, readable, proportional to envelope."
+  - STEP 6 (settle): group rotates back to 0° + envelope recedes (opacity→0.18, blur, scale 0.8, translateX -3%) → matches the FINAL state. Card scale 1.06, slideX 18%/8%. Smooth transition, no jump cut.
+  - Button appears at `ready` (z20, clickable).
+- PRESERVED: START state (landscape envelope, same size/position), FINAL state (card focused, envelope receded, button), assets, navy/flower/logo/lighting, all other sections.
+- REMOVED: boxy blob, rectangle flap, oversized envelope, card appearing too early, card tilted, layer offset during rotate.
+
+Stage Summary:
+- VLM-verified middle animation:
+  1. Rotate phase: envelope + flap rotate as one unit (no offset) ✓
+  2. Flap phase: triangular flap opens right ✓
+  3. Slide phase: card slides right, upright, readable, proportional (envelope NOT 2-3x card) ✓
+- VLM-verified start + final states preserved (landscape envelope start; card focus + receded envelope + button final).
+- Mobile (390×844): card upright, readable, proportional, no horizontal scroll.
+- Main page loads cleanly after "Open Invitation". No errors.
+- Lint clean. Dev server running with no console/runtime errors.
+
+Unresolved issues / risks:
+- Gallery + venue map images are AI-generated stand-ins.
+- Web Audio ambient music remains a generated pad.
+- The triangular flap is a CSS element (royal blue + gold edge) — intentional, reads as the opening mechanism.

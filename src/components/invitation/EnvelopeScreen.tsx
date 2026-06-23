@@ -7,16 +7,20 @@ import { GoldenPetals } from "./GoldenPetals";
 import { playPaperRustle, playChime } from "@/lib/sfx";
 
 /*
-  Envelope reveal — landscape asset, door-style right flap, card slides right.
+  Envelope reveal — landscape asset, coordinated group animation.
 
-  Phases:
-  1. appear  — envelope fades + scales in (landscape, no rotation)
-  2. flap    — right triangular flap opens like a door (rotateY)
-  3. slide   — card slides right out of the envelope, upright & readable
-  4. focus   — envelope recedes; card becomes the focus
-  5. ready   — "Open Invitation" button appears
+  START state (preserve): landscape envelope, ~860px wide, centered.
+  FINAL state (preserve): card focused, envelope receded behind.
+
+  Middle animation (the only thing changed):
+  1. appear   — landscape envelope fades + scales in (START state)
+  2. rotate   — whole reveal group rotates to opening position
+  3. flap     — triangular flap opens like a paper fold
+  4. slide    — card slides out (upright), proportional to envelope
+  5. settle   — group rotates back + envelope recedes → FINAL state
+  6. ready    — button appears
 */
-type Phase = "appear" | "flap" | "slide" | "focus" | "ready";
+type Phase = "appear" | "rotate" | "flap" | "slide" | "settle" | "ready";
 
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
@@ -32,7 +36,7 @@ export function EnvelopeScreen({
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const rustledRef = useRef(false);
 
-  // SSR-safe lazy initializer for mobile detection (updated on resize)
+  // SSR-safe lazy initializer for mobile detection
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== "undefined"
       ? window.matchMedia("(max-width: 640px)").matches
@@ -49,8 +53,9 @@ export function EnvelopeScreen({
     const push = (fn: () => void, ms: number) =>
       timers.current.push(setTimeout(fn, ms));
 
+    push(() => setPhase("rotate"), 1100); // group rotates to opening position
     push(() => {
-      setPhase("flap"); // right flap opens
+      setPhase("flap"); // flap opens
       if (!rustledRef.current) {
         rustledRef.current = true;
         try {
@@ -59,17 +64,17 @@ export function EnvelopeScreen({
           /* audio unavailable */
         }
       }
-    }, 1100);
-    push(() => setPhase("slide"), 2100); // card slides right
+    }, 2100);
+    push(() => setPhase("slide"), 3050); // card slides out
     push(() => {
-      setPhase("focus"); // envelope recedes
+      setPhase("settle"); // group rotates back + envelope recedes
       try {
         playChime();
       } catch {
         /* audio unavailable */
       }
-    }, 3400);
-    push(() => setPhase("ready"), 4100); // button appears
+    }, 4300);
+    push(() => setPhase("ready"), 5200); // button appears
 
     return () => {
       timers.current.forEach(clearTimeout);
@@ -77,14 +82,19 @@ export function EnvelopeScreen({
     };
   }, []);
 
-  const flapOpen = ["flap", "slide", "focus", "ready"].includes(phase);
-  const cardOut = ["slide", "focus", "ready"].includes(phase);
-  const recede = phase === "focus" || phase === "ready";
+  const flapOpen = ["flap", "slide", "settle", "ready"].includes(phase);
+  const cardOut = ["slide", "settle", "ready"].includes(phase);
+  const recede = phase === "settle" || phase === "ready";
   const showButton = phase === "ready";
 
-  // Card slide distance (% of stage width, to the right).
-  // On mobile, slide less and recenter so the card stays fully visible.
-  const slideX = isMobile ? (recede ? 8 : 14) : recede ? 20 : 32;
+  // Group rotation: -12° during rotate/flap (opening tilt), back to 0° on settle.
+  // Applied to the whole reveal group so all layers stay aligned.
+  const groupRotate =
+    phase === "appear" ? 0 : phase === "rotate" || phase === "flap" ? -12 : 0;
+
+  // Card slide distance to the right (in % of stage width).
+  // Less on mobile so card stays fully visible.
+  const slideX = isMobile ? (recede ? 8 : 13) : recede ? 18 : 28;
 
   const handleStageClick = () => {
     if (phase === "ready") {
@@ -123,27 +133,41 @@ export function EnvelopeScreen({
       />
 
       <div className="env-stage relative z-10 flex w-full flex-col items-center">
-        {/* Stage — landscape box matching the envelope asset (2000×1410) */}
+        {/*
+          Reveal group — ALL transform (rotate + scale) applied here so every
+          layer (envelope, card, flap, shadow) rotates as one unit. No layer
+          is ever offset from the others.
+          START: scale 0.96, opacity 0 → scale 1, opacity 1 (landscape).
+          During rotate/flap: rotate -12° (opening tilt).
+          FINAL: rotate 0°, scale 0.8 (recede).
+        */}
         <div
-          className="relative"
           style={{
             width: "min(860px, 88vw)",
             aspectRatio: "2000 / 1410",
             opacity: phase === "appear" ? 0 : 1,
-            transform: `scale(${phase === "appear" ? 0.96 : recede ? 0.8 : 1})`,
+            transform: `rotate(${groupRotate}deg) scale(${phase === "appear" ? 0.96 : recede ? 0.8 : 1})`,
             transition: `opacity 700ms ${EASE}, transform 900ms ${EASE}`,
+            position: "relative",
           }}
         >
-          {/* Hidden card — always UPRIGHT. Behind the opaque envelope (z1)
-              until it slides out (z5). Positioned to emerge from inside the
-              envelope, sliding right. */}
+          {/*
+            Card — always UPRIGHT (never rotates; only the group rotates, and
+            the card counter-rotates to stay readable... actually since the
+            group rotation is small (-12°) and brief, the card stays upright
+            relative to the group during slide, then the group returns to 0°.
+            Card is proportional to envelope: ~75% of envelope width so the
+            envelope is only ~1.18x the card (not 2-3x).
+            Hidden (z1, opacity 0) behind the opaque envelope until slide.
+          */}
           <div
             style={{
               position: "absolute",
-              left: "30%",
+              // Card centered vertically; positioned to slide out from inside.
+              left: "12.5%",
               top: "50%",
-              width: "40%",
-              transform: `translate(0, -50%) translateX(${cardOut ? `${slideX * 2.5}%` : "0"}) scale(${recede ? 1.18 : 1})`,
+              width: "75%",
+              transform: `translate(0, -50%) translateX(${cardOut ? `${slideX}%` : "0"}) scale(${recede ? 1.06 : 1})`,
               zIndex: cardOut ? 5 : 1,
               opacity: cardOut ? 1 : 0,
               transition: `transform 1100ms ${EASE}, opacity 800ms ease`,
@@ -172,7 +196,7 @@ export function EnvelopeScreen({
           </div>
 
           {/* Envelope landscape image — opaque, hides the card while inside.
-              Recedes (fade + blur + scale down) in focus phase. */}
+              Recedes (fade + blur) in settle phase. */}
           <div
             style={{
               position: "absolute",
@@ -180,7 +204,7 @@ export function EnvelopeScreen({
               zIndex: 2,
               opacity: recede ? 0.18 : 1,
               filter: recede ? "blur(1.5px) brightness(0.7)" : "none",
-              transform: recede ? "translateX(-4%)" : "none",
+              transform: recede ? "translateX(-3%)" : "none",
               transition: `opacity 900ms ease, filter 900ms ease, transform 900ms ${EASE}`,
             }}
           >
@@ -192,57 +216,43 @@ export function EnvelopeScreen({
             />
           </div>
 
-          {/* Right triangular flap — opens like a door from the right edge.
-              Triangular via clip-path. Royal blue (contrasts with dark navy
-              envelope) + bold gold edge along the hypotenuse. Hinged at
-              right center. Always z4 (visible); card z5 slides in front. */}
+          {/*
+            Right triangular flap — paper-fold shape (trapezoid-ish triangle).
+            clip-path triangle, royal blue + gold edge. Hinged at right center.
+            Opens AFTER the group rotate settles (flap phase). z4 always;
+            card z5 slides in front.
+          */}
           <div
             style={{
               position: "absolute",
               right: "3%",
               top: "5%",
               bottom: "5%",
-              width: "30%",
+              width: "28%",
               zIndex: 4,
               transformOrigin: "right center",
               transform: `perspective(1600px) rotateY(${flapOpen ? -125 : 0}deg)`,
-              transition: `transform 900ms ${EASE}, opacity 700ms ease`,
-              opacity: flapOpen ? 0.8 : 1,
+              transition: `transform 850ms ${EASE}, opacity 700ms ease`,
+              opacity: flapOpen ? 0.82 : 1,
               clipPath: "polygon(0% 50%, 100% 0%, 100% 100%)",
-              // Royal blue gradient — clearly distinct from dark navy envelope
               background:
                 "linear-gradient(135deg, #123083 0%, #1a3f8f 40%, #0e2570 100%)",
               filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.5))",
               backfaceVisibility: "hidden",
             }}
           >
-            {/* Bold gold edge along the hypotenuse (the fold line) */}
+            {/* Gold fold edges (hypotenuse lines) */}
             <svg
               className="absolute inset-0 h-full w-full"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              <line
-                x1="0" y1="50"
-                x2="100" y2="0"
-                stroke="#C8A45D"
-                strokeWidth="1.2"
-                vectorEffect="non-scaling-stroke"
-                opacity="0.85"
-              />
-              <line
-                x1="0" y1="50"
-                x2="100" y2="100"
-                stroke="#C8A45D"
-                strokeWidth="1.2"
-                vectorEffect="non-scaling-stroke"
-                opacity="0.85"
-              />
+              <line x1="0" y1="50" x2="100" y2="0" stroke="#C8A45D" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity="0.85" />
+              <line x1="0" y1="50" x2="100" y2="100" stroke="#C8A45D" strokeWidth="1.2" vectorEffect="non-scaling-stroke" opacity="0.85" />
             </svg>
-            {/* subtle lotus mark centered on the flap */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <LotusMark width={30} color="#C8A45D" className="opacity-65" />
+              <LotusMark width={28} color="#C8A45D" className="opacity-60" />
             </div>
           </div>
         </div>
