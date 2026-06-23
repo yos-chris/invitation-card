@@ -3,18 +3,23 @@
 import { useEffect, useState } from "react";
 import { DICT, type Lang } from "@/lib/i18n";
 import { Hero } from "./Hero";
+import { Countdown } from "./Countdown";
 import { EventDetail } from "./EventDetail";
 import { Gallery } from "./Gallery";
 import { Rsvp } from "./Rsvp";
 import { ClosingFooter } from "./ClosingFooter";
 import { FrameCorners, FloralSprig } from "./Ornaments";
+import { SectionBridge } from "./SectionBridge";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function MainInvitation({
   lang,
   onReplay,
+  onLangChange,
 }: {
   lang: Lang;
   onReplay: () => void;
+  onLangChange: (l: Lang) => void;
 }) {
   const t = DICT[lang];
   const [showScrollHint, setShowScrollHint] = useState(true);
@@ -64,10 +69,17 @@ export function MainInvitation({
         </div>
       </div>
 
+      {/* language switcher (bottom-left) */}
+      <LanguageSwitcher lang={lang} onChange={onLangChange} />
+
       <main className="relative z-10 flex flex-1 flex-col">
         <Hero lang={lang} />
+        <Countdown lang={lang} />
+        <SectionBridge />
         <EventDetail lang={lang} />
+        <SectionBridge />
         <Gallery lang={lang} />
+        <SectionBridge />
         <Rsvp lang={lang} />
         <ClosingFooter lang={lang} onReplay={onReplay} />
       </main>

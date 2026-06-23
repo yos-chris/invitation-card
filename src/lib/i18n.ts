@@ -46,6 +46,29 @@ type Dict = {
   musicOff: string;
   replayInvitation: string;
   scrollHint: string;
+  // countdown
+  countdownTitle: string;
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+  countdownDone: string;
+  // calendar + share
+  addToCalendar: string;
+  share: string;
+  shareTitle: string;
+  shareText: string;
+  linkCopied: string;
+  copyLink: string;
+  // language switcher
+  switchLang: string;
+  // gallery
+  galleryCaption1: string;
+  galleryCaption2: string;
+  galleryCaption3: string;
+  galleryCaption4: string;
+  galleryCaption5: string;
+  galleryCaption6: string;
 };
 
 const en: Dict = {
@@ -89,6 +112,25 @@ const en: Dict = {
   musicOff: "Music off",
   replayInvitation: "Replay invitation",
   scrollHint: "Scroll to explore",
+  countdownTitle: "Counting down to our celebration",
+  days: "Days",
+  hours: "Hours",
+  minutes: "Minutes",
+  seconds: "Seconds",
+  countdownDone: "Today is the day",
+  addToCalendar: "Add to Calendar",
+  share: "Share",
+  shareTitle: "1st Anniversary · Bali Office",
+  shareText: "You are warmly invited to the 1st Anniversary of the Bali Office — Modern Cancer Hospital Guangzhou.",
+  linkCopied: "Link copied",
+  copyLink: "Copy link",
+  switchLang: "Language",
+  galleryCaption1: "Celebration",
+  galleryCaption2: "Care & Community",
+  galleryCaption3: "Our Team",
+  galleryCaption4: "Venue",
+  galleryCaption5: "Anniversary",
+  galleryCaption6: "Gratitude",
 };
 
 const id: Dict = {
@@ -132,6 +174,25 @@ const id: Dict = {
   musicOff: "Musik mati",
   replayInvitation: "Putar ulang undangan",
   scrollHint: "Gulir untuk menjelajah",
+  countdownTitle: "Menghitung hari menuju perayaan kami",
+  days: "Hari",
+  hours: "Jam",
+  minutes: "Menit",
+  seconds: "Detik",
+  countdownDone: "Hari ini adalah harinya",
+  addToCalendar: "Tambah ke Kalender",
+  share: "Bagikan",
+  shareTitle: "Ulang Tahun Pertama · Kantor Bali",
+  shareText: "Anda diundang hangat ke perayaan Ulang Tahun Pertama Kantor Bali — Modern Cancer Hospital Guangzhou.",
+  linkCopied: "Tautan disalin",
+  copyLink: "Salin tautan",
+  switchLang: "Bahasa",
+  galleryCaption1: "Perayaan",
+  galleryCaption2: "Kepedulian & Komunitas",
+  galleryCaption3: "Tim Kami",
+  galleryCaption4: "Lokasi Acara",
+  galleryCaption5: "Ulang Tahun",
+  galleryCaption6: "Rasa Syukur",
 };
 
 const zh: Dict = {
@@ -175,6 +236,25 @@ const zh: Dict = {
   musicOff: "音乐关闭",
   replayInvitation: "重播邀请函",
   scrollHint: "滚动浏览",
+  countdownTitle: "距离庆典还有",
+  days: "天",
+  hours: "时",
+  minutes: "分",
+  seconds: "秒",
+  countdownDone: "就是今天",
+  addToCalendar: "添加到日历",
+  share: "分享",
+  shareTitle: "一周年纪念 · 巴厘岛办事处",
+  shareText: "诚挚邀请您出席巴厘岛办事处一周年纪念庆典 — 广州现代肿瘤医院。",
+  linkCopied: "链接已复制",
+  copyLink: "复制链接",
+  switchLang: "语言",
+  galleryCaption1: "庆典",
+  galleryCaption2: "关怀与社区",
+  galleryCaption3: "我们的团队",
+  galleryCaption4: "会场",
+  galleryCaption5: "周年纪念",
+  galleryCaption6: "感恩",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };

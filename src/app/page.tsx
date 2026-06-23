@@ -36,6 +36,10 @@ export default function Home() {
     requestAnimationFrame(() => window.scrollTo({ top: 0 }));
   }, []);
 
+  const handleLangChange = useCallback((l: Lang) => {
+    setLang(l);
+  }, []);
+
   const musicLabel = stage === "language" ? "" : DICT[lang].musicOn;
 
   return (
@@ -64,7 +68,11 @@ export default function Home() {
         aria-hidden={stage !== "main"}
       >
         {stage === "main" ? (
-          <MainInvitation lang={lang} onReplay={handleReplay} />
+          <MainInvitation
+            lang={lang}
+            onReplay={handleReplay}
+            onLangChange={handleLangChange}
+          />
         ) : null}
       </div>
 

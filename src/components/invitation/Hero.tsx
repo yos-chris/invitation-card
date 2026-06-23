@@ -2,6 +2,7 @@
 
 import { DICT, type Lang } from "@/lib/i18n";
 import { FrameCorners, ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
+import { Reveal } from "./Reveal";
 
 export function Hero({ lang }: { lang: Lang }) {
   const t = DICT[lang];
@@ -9,7 +10,7 @@ export function Hero({ lang }: { lang: Lang }) {
     <section className="relative px-4 pt-10 sm:pt-16">
       <div className="relative mx-auto max-w-3xl">
         {/* framed invitation card */}
-        <div className="frame-classic relative bg-white/60 px-6 py-10 text-center shadow-[0_30px_70px_-30px_rgba(3,31,68,0.45)] sm:px-12 sm:py-14">
+        <Reveal className="frame-classic relative bg-white/60 px-6 py-10 text-center shadow-[0_30px_70px_-30px_rgba(3,31,68,0.45)] sm:px-12 sm:py-14">
           <FrameCorners color="navy" inset={8} size={38} />
 
           {/* logo */}
@@ -31,7 +32,15 @@ export function Hero({ lang }: { lang: Lang }) {
           <h1 className="mt-3 font-serif-inv text-5xl font-bold leading-[1.05] text-navy sm:text-6xl">
             {t.heroTitleLine1}
           </h1>
-          <p className="mt-2 font-serif-inv text-2xl italic text-royal sm:text-3xl">
+
+          {/* monogram crest between title lines */}
+          <div className="my-3 flex items-center justify-center gap-3">
+            <span className="h-px w-12 bg-gold/60" />
+            <LotusMark width={28} color="#C8A45D" />
+            <span className="h-px w-12 bg-gold/60" />
+          </div>
+
+          <p className="font-serif-inv text-2xl italic text-royal sm:text-3xl">
             {t.heroTitleLine2}
           </p>
 
@@ -53,7 +62,7 @@ export function Hero({ lang }: { lang: Lang }) {
             <span className="hidden text-gold sm:inline">◆</span>
             <span className="text-royal">{t.venueName}</span>
           </div>
-        </div>
+        </Reveal>
 
         {/* floral accents */}
         <FloralSprig

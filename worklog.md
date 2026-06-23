@@ -49,3 +49,46 @@ Unresolved issues / risks:
 - Gallery currently uses styled placeholder panels (intentional, per prompt: "Use local image placeholders that can be replaced later"). Real event photos can be dropped into `GalleryPanel` children later. Low risk.
 - Background music is a generated Web Audio ambient pad (elegant, subtle) rather than a licensed track. Acceptable and reliable; can be swapped for an audio file in `public/` + an `<audio>` element if a licensed track becomes available.
 - Future polish opportunities: add subtle entrance animations to each main section on scroll (IntersectionObserver), add a "share" button, add calendar (.ics) download, add countdown to event date. These are enhancements, not bugs.
+
+---
+Task ID: 2
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + styling enrichment + new features. Assess current status, test via agent-browser, fix bugs, then add more premium styling details and new functionality.
+
+Work Log:
+- Reviewed worklog (Task 1) — project was stable and complete. Performed fresh QA via agent-browser (desktop 1440×900 + mobile 390×844).
+- QA findings: No bugs, no console errors, no runtime errors. All 3 stages work (language → envelope → main). Indonesian path verified (BUKA UNDANGAN / Ulang Tahun Pertama / Detail Acara / Momen Kebersamaan / Konfirmasi Kehadiran). Mandarin verified. RSVP WhatsApp flow opens wa.me/6285710558888 with correct pre-filled message. Mobile renders cleanly.
+- VLM-driven QA identified improvement opportunities: sections felt slightly disconnected, gallery could be richer, more decorative depth needed. These aligned with the mandatory "improve styling + add features" directive.
+- NEW COMPONENTS created in `src/components/invitation/`:
+  - `Reveal.tsx` — `useReveal` hook (IntersectionObserver) + `Reveal` wrapper component for elegant fade+rise-on-scroll. Added a 1.4s safety fallback timer so content is never stuck hidden in full-page captures or edge cases (fixes a testing artifact where below-the-fold sections appeared empty in `--full` screenshots). Once revealed, stays revealed.
+  - `Countdown.tsx` — live countdown to event date (July 28, 2026 10:00 AM +08:00). Four framed number boxes (Days accent-navy, Hours/Minutes/Seconds ivory) with gold corner ticks, lotus header, floral side accents, classic divider. Updates every second. Shows "Today is the day" when event starts. Fully i18n.
+  - `EventActions.tsx` — "Add to Calendar" (.ics download) + "Share" (Web Share API with copy-link fallback + "Link copied" confirmation). .ics generates a valid VEVENT with correct UTC times (DTSTART:20260728T020000Z), 3-hour duration, location, description.
+  - `LanguageSwitcher.tsx` — fixed bottom-left control (globe icon + current language). Opens a small navy dropdown with all 3 languages. Lets users switch display language on the main page WITHOUT replaying the envelope. Wired to page.tsx via `onLangChange`.
+  - `SectionBridge.tsx` — decorative transition between sections: floral sprigs + lotus + gradient lines (light/dark variants). Adds visual rhythm so sections don't feel disconnected.
+- ENHANCED existing components:
+  - `Hero.tsx` — wrapped in Reveal; added a gold-line + lotus monogram crest between the two title lines for richer hierarchy.
+  - `EventDetail.tsx` — each card wrapped in Reveal with staggered delays (120ms); added navy corner ornaments to all 3 cards; icon circles now scale + tint orange on hover; attendance state highlights selected option with orange border; integrated `EventActions` (calendar + share) below the RSVP phone bar.
+  - `Gallery.tsx` — major enrichment: featured large panel (col-span-3 row-span-3) with layered double gold frame + giant "1" monogram overlay; added "gold" tone panel for variety; hover effects: lotus scales 1.25×, corner ticks expand, sheen sweep, caption slides up (desktop) / always visible (mobile); vignette depth layer; staggered reveal delays. Mobile now uses varied layout (1 large + 2-col grid + 1 wide + 2-col grid) instead of uniform stack. 6 localized captions added.
+  - `Rsvp.tsx` — wrapped in Reveal; added FrameCorners to the form; richer focus states (fields brighten to white + gold ring on focus); selected attendance option gets orange border + tint; added "Opening WhatsApp…" confirmation toast that appears above the form for 4s after submit.
+  - `ClosingFooter.tsx` — wrapped in Reveal; added top + bottom floral sprig flourishes for richer decoration.
+  - `MainInvitation.tsx` — composed new layout: Hero → Countdown → SectionBridge → EventDetail → SectionBridge → Gallery → SectionBridge → Rsvp → ClosingFooter. Added LanguageSwitcher (bottom-left). Footer uses `mt-auto` for sticky-bottom behavior.
+- i18n (`src/lib/i18n.ts`) — added 17 new translation keys per language (countdownTitle, days/hours/minutes/seconds, countdownDone, addToCalendar, share, shareTitle, shareText, linkCopied, copyLink, switchLang, galleryCaption1-6). All 3 languages (id/en/zh) fully updated.
+- `src/app/page.tsx` — added `handleLangChange` callback, passed `onLangChange` to MainInvitation.
+
+Stage Summary:
+- All new features verified end-to-end via agent-browser:
+  1. Countdown renders with live ticking numbers (Days/Hours/Minutes/Seconds), elegant framed boxes, accent day counter. ✓
+  2. Add-to-Calendar downloads a valid `bali-anniversary.ics` file (verified content: correct UTC times, location, summary). ✓
+  3. Share button uses native Web Share API where available, falls back to copy-link with "Link copied" confirmation. ✓
+  4. Language switcher on main page switches display language instantly without replaying envelope (verified: switched to 中文, headings changed to 一周年纪念/距离庆典还有/活动详情/温暖时刻/出席确认). ✓
+  5. Scroll-reveal animations trigger elegantly on scroll; safety fallback ensures all content visible in full-page captures. ✓
+  6. Gallery now has a featured large panel, gold tone, hover zoom/sheen/caption-reveal, varied mobile layout. ✓
+  7. RSVP flow still opens WhatsApp correctly after all changes (verified: Jane Doe → wa.me/6285710558888). ✓
+  8. Mobile (390×844): no horizontal scroll, no overlap between language switcher (bottom-left) and scroll hint (bottom-center), countdown readable, cards stack properly, gallery adapts. ✓
+- Lint clean (`bun run lint` → no errors). Dev server runs with no console/runtime errors.
+- Still only the 7 allowed sections (countdown, calendar, share, language switcher are integrated INTO existing sections / are utility controls, not new sections). No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery still uses styled placeholder panels (intentional). Real photos can replace `<GalleryPanel>` inner content later.
+- Web Audio ambient music remains a generated pad (reliable, no external files).
+- Recommended next steps: (1) generate real event imagery for the gallery via image-generation skill and swap into panels; (2) consider adding a subtle confetti/petal animation on the hero for celebratory feel; (3) add an optional "guestbook" of wishes if scope allows — though must respect the strict 7-section rule, so would integrate into RSVP section only.
