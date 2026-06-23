@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FrameCorners, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
@@ -13,17 +14,69 @@ export function ClosingFooter({
   onReplay: () => void;
 }) {
   const t = DICT[lang];
+  const [clicked, setClicked] = useState<Set<number>>(new Set());
+  const [burst, setBurst] = useState(false);
+
+  const handleMedallion = useCallback((i: number) => {
+    setClicked((prev) => {
+      const next = new Set(prev);
+      next.add(i);
+      if (next.size === 4 && !burst) {
+        setBurst(true);
+        setTimeout(() => setBurst(false), 2000);
+      }
+      return next;
+    });
+  }, [burst]);
+
+  const medallionClass = (i: number) =>
+    `absolute h-3 w-3 rounded-full border transition-all duration-500 hover:scale-150 ${
+      clicked.has(i)
+        ? "border-orange bg-orange shadow-[0_0_8px_rgba(240,120,0,0.8)]"
+        : "border-gold/70 bg-gold/70"
+    }`;
+
   return (
     <footer className="relative mt-auto px-4 pb-10 pt-10">
       <Reveal className="mx-auto max-w-3xl">
         <div className="frame-classic relative bg-navy px-6 py-12 text-center text-ivory sm:px-12">
           <FrameCorners color="gold" inset={8} size={36} />
 
-          {/* gold corner medallions (decorative dots) */}
-          <span className="pointer-events-none absolute left-3 top-3 h-2 w-2 rounded-full bg-gold/70" />
-          <span className="pointer-events-none absolute right-3 top-3 h-2 w-2 rounded-full bg-gold/70" />
-          <span className="pointer-events-none absolute bottom-3 left-3 h-2 w-2 rounded-full bg-gold/70" />
-          <span className="pointer-events-none absolute bottom-3 right-3 h-2 w-2 rounded-full bg-gold/70" />
+          {/* gold corner medallions — clickable easter egg (click all 4 for a burst) */}
+          <button onClick={() => handleMedallion(0)} className={`${medallionClass(0)} left-3 top-3`} aria-label="Medallion 1" aria-hidden="true" tabIndex={-1} />
+          <button onClick={() => handleMedallion(1)} className={`${medallionClass(1)} right-3 top-3`} aria-label="Medallion 2" aria-hidden="true" tabIndex={-1} />
+          <button onClick={() => handleMedallion(2)} className={`${medallionClass(2)} bottom-3 left-3`} aria-label="Medallion 3" aria-hidden="true" tabIndex={-1} />
+          <button onClick={() => handleMedallion(3)} className={`${medallionClass(3)} bottom-3 right-3`} aria-label="Medallion 4" aria-hidden="true" tabIndex={-1} />
+
+          {/* easter egg burst overlay */}
+          {burst ? (
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              <div
+                className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{
+                  background: "radial-gradient(circle, rgba(240,120,0,0.6) 0%, rgba(200,164,93,0.3) 30%, transparent 70%)",
+                  animation: "ee-burst 1.5s ease-out forwards",
+                }}
+              />
+              <LotusMark
+                width={64}
+                color="#F07800"
+                className="anim-shimmer relative"
+                style={{ animation: "ee-lotus 1.5s ease-out forwards" } as React.CSSProperties}
+              />
+              <style>{`
+                @keyframes ee-burst {
+                  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+                  100% { transform: translate(-50%, -50%) scale(40); opacity: 0; }
+                }
+                @keyframes ee-lotus {
+                  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+                  30% { transform: scale(1.3) rotate(15deg); opacity: 1; }
+                  100% { transform: scale(0.8) rotate(0deg); opacity: 0; }
+                }
+              `}</style>
+            </div>
+          ) : null}
 
           {/* decorative top flourish */}
           <FloralSprig

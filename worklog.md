@@ -418,3 +418,46 @@ Unresolved issues / risks:
 - Notification reminder uses setTimeout (works while the page is open).
 - Parallax disabled on touch devices (intentional, for performance).
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add an elegant "table of contents" / chapter index overlay; (3) add a venue gallery sub-section (more venue photos); (4) consider adding a subtle "easter egg" interaction on the footer medallions.
+
+---
+Task ID: 11
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + venue gallery expansion + table of contents overlay + footer medallion easter egg.
+
+Work Log:
+- Reviewed worklog (Tasks 1–10) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified final features: venue gallery expansion, table of contents, easter eggs.
+- Generated 3 new AI venue photos via `z-ai image` CLI:
+  - `venue-ballroom.png` (1344×768) — luxury tropical resort ballroom interior
+  - `venue-garden.png` (1344×768) — tropical resort garden at golden hour
+  - `venue-lobby.png` (864×1152) — elegant resort lobby with floral arrangements
+  - Saved to `public/invitation/gallery/`.
+- NEW COMPONENTS in `src/components/invitation/`:
+  - `VenueGallery.tsx` — "Venue Gallery" section with 4 real venue photos (ballroom, garden, lobby, exterior) in an editorial grid on desktop (2+1+1 col span layout, 220px rows) and stacked cards on mobile. Each photo has: gold inner frame, lotus watermark (scales on hover), corner ticks (expand on hover), brand-cohesion gradient overlay, caption pill (localized: Ballroom/Garden/Lobby/Venue name). Clicking any photo opens the shared Lightbox component with localized captions + prev/next/keyboard nav.
+  - `TableOfContents.tsx` — elegant floating "Contents" overlay (desktop lg+ only). Trigger button (List icon + label) at bottom-center-left. Opens a navy/ivory framed modal with lotus, "Contents" heading, 4 numbered items (01 Invitation, 02 Event Detail, 03 Moments of Togetherness, 04 RSVP Confirmation). Active item highlighted with orange number + dot. Clicking an item smooth-scrolls to that section and closes the modal. Keyboard shortcut: press "T" to toggle, "Esc" to close. Ignores keypresses when typing in form fields.
+- NEW FEATURES:
+  - **Venue gallery** — 4 real AI-generated venue photos with lightbox integration. VLM-confirmed: "real venue photos in editorial grid with gold frames and captions." ✓
+  - **Table of contents overlay** — press "T" or click the Contents button. VLM-verified: dialog opens with 4 numbered items; clicking "04 RSVP Confirmation" scrolled to 4917px and closed. ✓
+  - **Footer medallion easter egg** — the 4 gold corner medallions in the footer are now clickable. Clicking each turns it from gold to orange (with a glow). Clicking all 4 triggers a burst animation (radial orange/gold glow expanding + lotus mark scaling/rotating). Verified: all 4 medallions turned orange after clicking; burst element confirmed in DOM. ✓
+- ENHANCED existing components:
+  - `MainInvitation.tsx` — integrated `<VenueGallery>` after EventDetail (inside the sec-detail div, preceded by a SectionBridge), added `<TableOfContents>` (no-print wrapper).
+  - `ClosingFooter.tsx` — converted the 4 static medallion dots to clickable buttons with state tracking (`clicked` Set), color transition (gold→orange on click), and burst overlay animation (`ee-burst` + `ee-lotus` keyframes). Refactored from inline component to inline elements to satisfy react-hooks/static-components lint rule.
+- i18n (`src/lib/i18n.ts`) — added 7 new keys per language: venueGalleryTitle, venueGalleryIntro, venueBallroom, venueGarden, venueLobby, tocTitle, tocOpen.
+
+Stage Summary:
+- All new features verified via agent-browser + VLM:
+  1. Venue gallery: 4 real photos with gold frames + captions + lightbox. VLM-confirmed. ✓
+  2. Table of contents: press T opens dialog with 4 numbered items; clicking navigates + closes. Verified scroll to 4917px. ✓
+  3. Footer medallion easter egg: clicking all 4 medallions turns them orange + triggers burst. Verified all 4 orange + burst in DOM. ✓
+  4. Mobile (390×844): venue gallery photos stack vertically, full width, readable, no horizontal scroll. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. VenueGallery is integrated INTO the Event Detail section. TableOfContents + easter egg are utility overlays / micro-interactions. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map + batik + venue gallery images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- Notification reminder uses setTimeout (works while the page is open).
+- Parallax disabled on touch devices (intentional, for performance).
+- Table of Contents is desktop-only (lg+); mobile users use the section nav dots / scroll.
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add a subtle "page enter" sound when the curtain reveals the main page; (3) consider adding a "share to social" sub-menu (Facebook, Twitter, WhatsApp, Copy Link); (4) add a subtle ambient sound when hovering over gallery photos.

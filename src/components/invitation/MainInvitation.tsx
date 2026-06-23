@@ -17,6 +17,8 @@ import { BackToTop } from "./BackToTop";
 import { ConfettiBurst } from "./ConfettiBurst";
 import { ScrollProgress } from "./ScrollProgress";
 import { ThankYouCard } from "./ThankYouCard";
+import { VenueGallery } from "./VenueGallery";
+import { TableOfContents } from "./TableOfContents";
 
 export function MainInvitation({
   lang,
@@ -122,6 +124,11 @@ export function MainInvitation({
         <BackToTop lang={lang} />
       </div>
 
+      {/* table of contents overlay (desktop, press T) */}
+      <div className="no-print">
+        <TableOfContents lang={lang} />
+      </div>
+
       <main className="relative z-10 flex flex-1 flex-col">
         <div id="top">
           <Hero lang={lang} />
@@ -130,6 +137,8 @@ export function MainInvitation({
         <SectionBridge />
         <div id="sec-detail">
           <EventDetail lang={lang} />
+          <SectionBridge />
+          <VenueGallery lang={lang} />
         </div>
         <SectionBridge />
         <div id="sec-gallery">

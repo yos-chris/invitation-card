@@ -109,6 +109,15 @@ export type Dict = {
   close: string;
   prev: string;
   next: string;
+  // venue gallery
+  venueGalleryTitle: string;
+  venueGalleryIntro: string;
+  venueBallroom: string;
+  venueGarden: string;
+  venueLobby: string;
+  // table of contents
+  tocTitle: string;
+  tocOpen: string;
 };
 
 const en: Dict = {
@@ -204,6 +213,13 @@ const en: Dict = {
   close: "Close",
   prev: "Previous",
   next: "Next",
+  venueGalleryTitle: "Venue Gallery",
+  venueGalleryIntro: "A glimpse of the elegant setting that awaits you.",
+  venueBallroom: "Ballroom",
+  venueGarden: "Garden",
+  venueLobby: "Lobby",
+  tocTitle: "Contents",
+  tocOpen: "Open contents",
 };
 
 const id: Dict = {
@@ -299,6 +315,13 @@ const id: Dict = {
   close: "Tutup",
   prev: "Sebelumnya",
   next: "Berikutnya",
+  venueGalleryTitle: "Galeri Tempat Acara",
+  venueGalleryIntro: "Sekilas suasana elegan yang menanti Anda.",
+  venueBallroom: "Ballroom",
+  venueGarden: "Taman",
+  venueLobby: "Lobi",
+  tocTitle: "Daftar Isi",
+  tocOpen: "Buka daftar isi",
 };
 
 const zh: Dict = {
@@ -394,6 +417,13 @@ const zh: Dict = {
   close: "关闭",
   prev: "上一张",
   next: "下一张",
+  venueGalleryTitle: "会场画廊",
+  venueGalleryIntro: "一窥等待您的雅致场景。",
+  venueBallroom: "宴会厅",
+  venueGarden: "花园",
+  venueLobby: "大堂",
+  tocTitle: "目录",
+  tocOpen: "打开目录",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };
