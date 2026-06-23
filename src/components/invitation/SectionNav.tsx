@@ -13,7 +13,6 @@ type SectionDef = { id: string; labelKey: keyof Dict };
 const SECTIONS: SectionDef[] = [
   { id: "top", labelKey: "navHero" },
   { id: "sec-detail", labelKey: "detailTitle" },
-  { id: "sec-gallery", labelKey: "galleryTitle" },
   { id: "sec-rsvp", labelKey: "rsvpTitle" },
 ];
 

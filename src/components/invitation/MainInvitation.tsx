@@ -5,7 +5,6 @@ import { DICT, type Lang } from "@/lib/i18n";
 import { Hero } from "./Hero";
 import { Countdown } from "./Countdown";
 import { EventDetail } from "./EventDetail";
-import { Gallery } from "./Gallery";
 import { Rsvp } from "./Rsvp";
 import { Guestbook } from "./Guestbook";
 import { ClosingFooter } from "./ClosingFooter";
@@ -133,10 +132,6 @@ export function MainInvitation({
           <EventDetail lang={lang} />
           <SectionBridge />
           <OurJourney lang={lang} />
-        </div>
-        <SectionBridge />
-        <div id="sec-gallery">
-          <Gallery lang={lang} />
         </div>
         <SectionBridge />
         <div id="sec-rsvp">

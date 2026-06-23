@@ -25,10 +25,13 @@ export function EventDetail({ lang }: { lang: Lang }) {
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {cards.map((c, i) => {
             const Icon = c.icon;
+            // Date card: large serif; Time card: even larger (focal); Venue: medium
+            const isDateCard = i === 0;
+            const isTimeCard = i === 1;
             return (
               <Reveal key={c.label} delay={i * 120}>
                 <article
-                  className="group relative h-full bg-white px-6 py-8 text-center transition-all duration-500 hover:-translate-y-1.5"
+                  className="group relative h-full bg-white px-5 py-9 text-center transition-all duration-500 hover:-translate-y-1.5 sm:px-6 sm:py-10"
                   style={{
                     border: "1px solid #031F44",
                     boxShadow:
@@ -60,9 +63,26 @@ export function EventDetail({ lang }: { lang: Lang }) {
                   <p className="font-cormorant text-xs uppercase tracking-[0.3em] text-navy/55">
                     {c.label}
                   </p>
-                  <p className="mt-2 font-serif-inv text-lg font-medium leading-snug text-navy">
-                    {c.value}
-                  </p>
+                  {/* Enlarged focal text: Date (32-42px), Time (36-48px), Venue (medium) */}
+                  {isTimeCard ? (
+                    <p
+                      className="mt-3 font-serif-inv font-bold leading-none text-navy"
+                      style={{ fontSize: "clamp(30px, 5vw, 46px)" }}
+                    >
+                      {c.value}
+                    </p>
+                  ) : isDateCard ? (
+                    <p
+                      className="mt-3 font-serif-inv font-bold leading-tight text-navy"
+                      style={{ fontSize: "clamp(24px, 3.8vw, 38px)" }}
+                    >
+                      {c.value}
+                    </p>
+                  ) : (
+                    <p className="mt-3 font-serif-inv text-xl font-semibold leading-snug text-navy sm:text-2xl">
+                      {c.value}
+                    </p>
+                  )}
                   {c.sub ? (
                     <p className="mt-2 font-body-inv text-xs leading-relaxed text-navy/60">
                       {c.sub}

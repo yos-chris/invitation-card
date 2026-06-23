@@ -1,42 +1,95 @@
 /**
- * Ambient music engine using the Web Audio API.
- * Generates a slow, elegant evolving pad chord progression — no external
- * audio files required. Designed to feel like a premium cinematic underscore.
+ * Background music engine — plays audio from a YouTube video via the hidden
+ * IFrame Player API. Starts only after user interaction (language selection)
+ * to respect browser autoplay policies. Loops continuously.
+ *
+ * Fallback: upload an mp3 version of the selected music and set
+ * BACKGROUND_MUSIC_URL below if YouTube background playback is blocked.
  */
 
-type Chord = number[]; // frequencies in Hz
+// YouTube video ID for the background music.
+const YOUTUBE_VIDEO_ID = "Tqa2d8I82Fc";
 
-// Note frequencies (Hz)
-const N = {
-  C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.0, A3: 220.0, B3: 246.94,
-  C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.0, A4: 440.0, B4: 493.88,
-  C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.0,
-};
+// Fallback: upload mp3 version of selected music if YouTube background
+// playback is blocked. Set this to a /audio/*.mp3 path to use an <audio>
+// element instead of the YouTube IFrame.
+const BACKGROUND_MUSIC_URL = ""; // e.g. "/music/background.mp3"
 
-// Soft, warm chord progression (maj7 / add9 voicings) — Cmaj7 · Fmaj7 · Am7 · G
-const PROGRESSION: Chord[] = [
-  [N.C3, N.G3, N.E4, N.B4, N.E5],
-  [N.F3, N.A3, N.F4, N.C5, N.E5],
-  [N.A3, N.E4, N.A4, N.C5, N.E5],
-  [N.G3, N.D4, N.G4, N.B4, N.D5],
-];
+// Minimal YT IFrame API type
+interface YTPlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  mute: () => void;
+  unMute: () => void;
+  setVolume: (v: number) => void;
+  setLoop: (loop: boolean) => void;
+  getCurrentTime: () => number;
+  getDuration: () => number;
+  seekTo: (s: number, allow: boolean) => void;
+  getPlayerState: () => number;
+  destroy: () => void;
+}
 
-const CHORD_DURATION = 9.0; // seconds per chord
+interface YTNamespace {
+  Player: new (
+    el: HTMLElement | string,
+    opts: {
+      videoId?: string;
+      playerVars?: Record<string, string | number>;
+      events?: {
+        onReady?: (e: { target: YTPlayer }) => void;
+        onStateChange?: (e: { data: number; target: YTPlayer }) => void;
+      };
+    },
+  ) => YTPlayer;
+}
+
+declare global {
+  interface Window {
+    YT?: YTNamespace;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+let apiLoading = false;
+let apiReady = false;
+
+function loadYouTubeAPI(): Promise<void> {
+  if (apiReady) return Promise.resolve();
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return;
+    if (window.YT && window.YT.Player) {
+      apiReady = true;
+      resolve();
+      return;
+    }
+    // Set the ready callback before injecting the script
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      apiReady = true;
+      prev?.();
+      resolve();
+    };
+    if (!apiLoading) {
+      apiLoading = true;
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      tag.async = true;
+      document.head.appendChild(tag);
+    }
+  });
+}
 
 export class AmbientMusic {
-  private ctx: AudioContext | null = null;
-  private master: GainNode | null = null;
-  private voices: { osc: OscillatorNode; gain: GainNode }[] = [];
-  private lfo: OscillatorNode | null = null;
-  private lfoGain: GainNode | null = null;
-  private filter: BiquadFilterNode | null = null;
-  private timer: ReturnType<typeof setTimeout> | null = null;
-  private step = 0;
-  private playing = false;
-  private _volume = 0.16;
+  private player: YTPlayer | null = null;
+  private audioEl: HTMLAudioElement | null = null;
+  private container: HTMLDivElement | null = null;
+  private _isPlaying = false;
+  private ready = false;
+  private _volume = 60;
 
   get isPlaying() {
-    return this.playing;
+    return this._isPlaying;
   }
 
   get volume() {
@@ -45,119 +98,99 @@ export class AmbientMusic {
 
   setVolume(v: number) {
     this._volume = v;
-    if (this.master && this.ctx) {
-      this.master.gain.cancelScheduledValues(this.ctx.currentTime);
-      this.master.gain.linearRampToValueAtTime(v, this.ctx.currentTime + 0.6);
+    try {
+      this.player?.setVolume(v);
+      if (this.audioEl) this.audioEl.volume = v / 100;
+    } catch {
+      /* ignore */
     }
   }
 
   async start() {
-    if (this.playing) return;
-    const Ctor =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    this.ctx = new Ctor();
-    if (this.ctx.state === "suspended") {
-      try {
-        await this.ctx.resume();
-      } catch {
-        /* ignore */
+    if (this._isPlaying) return;
+
+    // Fallback to <audio> if a local file is configured
+    if (BACKGROUND_MUSIC_URL) {
+      if (!this.audioEl) {
+        this.audioEl = new Audio(BACKGROUND_MUSIC_URL);
+        this.audioEl.loop = true;
+        this.audioEl.volume = this._volume / 100;
       }
+      try {
+        await this.audioEl.play();
+        this._isPlaying = true;
+      } catch {
+        /* play blocked */
+      }
+      return;
     }
 
-    this.master = this.ctx.createGain();
-    this.master.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.master.gain.linearRampToValueAtTime(
-      this._volume,
-      this.ctx.currentTime + 2.5,
-    );
+    // YouTube IFrame path
+    try {
+      await loadYouTubeAPI();
+      if (!window.YT) return;
 
-    this.filter = this.ctx.createBiquadFilter();
-    this.filter.type = "lowpass";
-    this.filter.frequency.setValueAtTime(1400, this.ctx.currentTime);
-    this.filter.Q.setValueAtTime(0.6, this.ctx.currentTime);
+      if (!this.player) {
+        // Hidden container — 1px, off-screen, pointer-events none
+        this.container = document.createElement("div");
+        this.container.style.cssText =
+          "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;";
+        const host = document.createElement("div");
+        host.style.cssText = "width:1px;height:1px;";
+        this.container.appendChild(host);
+        document.body.appendChild(this.container);
 
-    // Slow LFO to gently open/close the filter for movement
-    this.lfo = this.ctx.createOscillator();
-    this.lfo.frequency.setValueAtTime(0.06, this.ctx.currentTime);
-    this.lfoGain = this.ctx.createGain();
-    this.lfoGain.gain.setValueAtTime(520, this.ctx.currentTime);
-    this.lfo.connect(this.lfoGain).connect(this.filter.frequency);
-    this.lfo.start();
-
-    this.filter.connect(this.master);
-    this.master.connect(this.ctx.destination);
-
-    this.playing = true;
-    this.step = 0;
-    this.scheduleChord();
-  }
-
-  private scheduleChord() {
-    if (!this.ctx || !this.filter || !this.playing) return;
-    const chord = PROGRESSION[this.step % PROGRESSION.length];
-    const now = this.ctx.currentTime;
-
-    chord.forEach((freq, i) => {
-      const osc = this.ctx!.createOscillator();
-      osc.type = i === 0 ? "sine" : i % 2 === 0 ? "sine" : "triangle";
-      osc.frequency.setValueAtTime(freq, now);
-      // subtle detune drift
-      const detune = (Math.random() - 0.5) * 6;
-      osc.detune.setValueAtTime(detune, now);
-
-      const g = this.ctx!.createGain();
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(0.18 / chord.length + 0.04, now + 2.2);
-      g.gain.linearRampToValueAtTime(0, now + CHORD_DURATION);
-
-      osc.connect(g).connect(this.filter!);
-      osc.start(now);
-      osc.stop(now + CHORD_DURATION + 0.3);
-      this.voices.push({ osc, gain: g });
-    });
-
-    // Cleanup ended voices
-    this.voices = this.voices.filter((v) => {
-      return v.osc.context.currentTime < now + CHORD_DURATION + 0.4;
-    });
-
-    this.step++;
-    this.timer = setTimeout(() => this.scheduleChord(), CHORD_DURATION * 1000);
+        this.player = new window.YT.Player(host, {
+          videoId: YOUTUBE_VIDEO_ID,
+          playerVars: {
+            autoplay: 1,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            rel: 0,
+            loop: 1,
+            playlist: YOUTUBE_VIDEO_ID, // required for loop to work
+          },
+          events: {
+            onReady: (e) => {
+              this.ready = true;
+              e.target.setVolume(this._volume);
+              e.target.playVideo();
+            },
+            onStateChange: (e) => {
+              // 0 = ended → restart to simulate loop
+              if (e.data === 0) {
+                e.target.seekTo(0, true);
+                e.target.playVideo();
+              }
+            },
+          },
+        });
+      } else if (this.ready) {
+        this.player.playVideo();
+      }
+      this._isPlaying = true;
+    } catch {
+      /* YT API unavailable */
+    }
   }
 
   stop() {
-    this.playing = false;
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
+    this._isPlaying = false;
+    try {
+      this.player?.pauseVideo();
+    } catch {
+      /* ignore */
     }
-    if (this.ctx && this.master) {
-      const now = this.ctx.currentTime;
-      this.master.gain.cancelScheduledValues(now);
-      this.master.gain.linearRampToValueAtTime(0, now + 1.2);
-    }
-    setTimeout(() => {
-      this.voices.forEach((v) => {
-        try {
-          v.osc.stop();
-        } catch {
-          /* already stopped */
-        }
-      });
-      this.voices = [];
+    if (this.audioEl) {
       try {
-        this.lfo?.stop();
+        this.audioEl.pause();
       } catch {
         /* ignore */
       }
-      this.lfo = null;
-      if (this.ctx && this.ctx.state !== "closed") {
-        this.ctx.close().catch(() => {});
-      }
-      this.ctx = null;
-    }, 1400);
+    }
   }
 }
 
