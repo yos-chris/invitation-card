@@ -126,7 +126,7 @@ export function ClosingFooter({
 
           <div className="mt-6 flex flex-col items-center gap-3">
             <img
-              src="/invitation/logo-white.png"
+              src="/invitation/logo-white-noseal.png"
               alt="Modern Cancer Hospital Guangzhou — St. Stamford International Medical"
               className="w-full max-w-[280px] select-none object-contain opacity-90"
               draggable={false}

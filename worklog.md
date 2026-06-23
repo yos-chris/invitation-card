@@ -775,3 +775,25 @@ Stage Summary:
 - English text MODERN CANCER HOSPITAL GUANGZHOU is kept.
 - Infinity emblem + circular seal preserved in white.
 - Visible on both ivory and navy backgrounds across the site.
+
+---
+Task ID: 21
+Agent: Z.ai Code (revision — restore opening logo, remove seal from footer logo)
+Task: Restore original colored logo on opening page. Remove the white circular seal from the footer logo.
+
+Work Log:
+- RESTORED original colored logo on opening/language page:
+  - Changed `LanguageScreen.tsx` logo src back from `/invitation/logo-white.png` to `/invitation/logo.png` (original colored logo with blue/orange emblem, colored text, gold seal).
+  - VLM-confirmed: "original colored version, blue and orange emblem, colored text, gold seal" ✓
+- CREATED white logo WITHOUT circular seal for footer:
+  - Created `scripts/make-logo-noseal.mjs` using sharp: same pixel-level whitening as before (all opaque → white), but masks out the rightmost ~11% of the logo width (the circular seal area) to transparent.
+  - Output: `public/invitation/logo-white-noseal.png` — white logo with Chinese text + English text + infinity emblem, but NO circular seal.
+  - VLM-verified on navy: "no circular seal on right, Chinese text yes, English text yes, all white" ✓
+  - Updated `ClosingFooter.tsx` logo src from `/invitation/logo-white.png` to `/invitation/logo-white-noseal.png`.
+  - VLM-verified on site footer: "footer logo is white, no circular seal, Chinese + English text present" ✓
+- Hero section still uses `/invitation/logo-white.png` (white with seal) — unchanged.
+
+Stage Summary:
+- Opening page: original colored logo restored ✓
+- Footer: white logo without circular seal ✓
+- Lint clean. Dev server running with no errors.
