@@ -1,12 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
 import { Lightbox, type GalleryImage } from "./Lightbox";
 
 const gold = "#C8A45D";
+
+/* Subtle scroll parallax: shifts the image vertically based on its position
+   relative to the viewport. Lightweight, rAF-throttled, passive listener. */
+function useParallaxImg(strength = 14) {
+  const ref = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    const img = ref.current;
+    if (!img) return;
+    // Skip on touch / small screens for performance
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const rect = img.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // distance of the image center from viewport center, normalized -1..1
+      const norm = (rect.top + rect.height / 2 - vh / 2) / (vh / 2);
+      const shift = Math.max(-1, Math.min(1, norm)) * strength;
+      img.style.transform = `scale(1.12) translateY(${shift}px)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [strength]);
+  return ref;
+}
 
 /* Real AI-generated gallery images */
 const GALLERY_IMAGES: GalleryImage[] = [
@@ -37,6 +72,7 @@ function GalleryPhoto({
   overlay?: "navy" | "royal" | "warm";
   onClick?: () => void;
 }) {
+  const imgRef = useParallaxImg(featured ? 18 : 12);
   const overlayGradient =
     overlay === "navy"
       ? "linear-gradient(180deg, rgba(3,31,68,0.15) 0%, rgba(3,31,68,0.55) 100%)"
@@ -56,11 +92,13 @@ function GalleryPhoto({
         aria-label={alt}
         tabIndex={-1}
       />
-      {/* Real photo background */}
+      {/* Real photo background — with scroll parallax + hover brightness */}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
+        className="absolute inset-0 h-full w-full object-cover transition-[filter] duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:brightness-110"
+        style={{ transform: "scale(1.12)" }}
         draggable={false}
         loading="lazy"
       />

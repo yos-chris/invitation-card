@@ -385,6 +385,12 @@
   50% { opacity: 1; transform: scale(1.15); }
 }
 
+/* Language screen logo glow aura */
+@keyframes logo-aura {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

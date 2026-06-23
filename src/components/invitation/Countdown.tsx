@@ -128,7 +128,23 @@ export function Countdown({ lang }: { lang: Lang }) {
         width={100}
         opacity={0.12}
       />
-      <div className="mx-auto max-w-3xl text-center">
+      {/* decorative double-border frame around the countdown */}
+      <div className="relative mx-auto max-w-3xl">
+        <div
+          className="absolute inset-0 border border-navy/20"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-[5px] border border-gold/30"
+          aria-hidden="true"
+        />
+        {/* corner medallions */}
+        <span className="pointer-events-none absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-gold/70" />
+        <span className="pointer-events-none absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-gold/70" />
+        <span className="pointer-events-none absolute -bottom-1 -left-1 h-2.5 w-2.5 rounded-full bg-gold/70" />
+        <span className="pointer-events-none absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-gold/70" />
+
+      <div className="relative px-4 py-6 text-center sm:px-8 sm:py-8">
         <LotusMark width={40} className="mx-auto mb-2 anim-shimmer" color="#C8A45D" />
         <h2 className="font-cormorant text-lg italic text-navy/75 sm:text-xl">
           {t.countdownTitle}
@@ -150,6 +166,7 @@ export function Countdown({ lang }: { lang: Lang }) {
             <Unit value={time.seconds} label={t.seconds} />
           </div>
         )}
+      </div>
       </div>
 
       <style>{`

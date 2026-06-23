@@ -339,3 +339,44 @@ Unresolved issues / risks:
 - Guestbook wishes + reminder state are per-browser (localStorage).
 - Notification reminder uses setTimeout (works while the page is open).
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add subtle parallax to the gallery photos on scroll; (3) add an elegant "table of contents" / chapter index overlay; (4) consider adding a subtle ambient particle effect to the RSVP section.
+
+---
+Task ID: 9
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + gallery parallax + RSVP ambient petals + countdown double-border frame + event card hover glow + language screen logo aura.
+
+Work Log:
+- Reviewed worklog (Tasks 1–8) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified final polish: parallax depth, ambient effects, frame richness, hover details.
+- NEW FEATURES:
+  - **Gallery scroll parallax** — created `useParallaxImg` hook in `Gallery.tsx`. Each gallery photo image gets a rAF-throttled scroll listener that shifts `translateY` based on the image's distance from viewport center (normalized -1..1 × strength). Featured panel uses strength 18, others 12. Baseline `scale(1.12)` ensures no gaps during parallax shift. Disabled on touch/coarse pointers for performance. Hover effect changed from scale to `brightness-110` (since parallax owns the transform). Verified: translateY shifted from +1.88px to -9.23px on scroll.
+  - **RSVP ambient golden petals** — added `<GoldenPetals count={8} opacity={0.18} speed={0.5}>` to the RSVP section (with `overflow-hidden` + `relative z-10` on content wrapper). VLM-confirmed: "subtle golden floating petal/particle shapes scattered in the background."
+  - **Countdown double-border frame** — wrapped the countdown content in a decorative frame: outer `border-navy/20` + inner `border-gold/30` (5px inset) + 4 gold corner medallion dots. VLM-confirmed: "outer navy line + inner gold line + small gold corner medallion dots."
+  - **Event detail card hover glow** — added a hover gold glow overlay div (box-shadow `0 0 24px -2px rgba(200,164,93,0.35)` + gold ring) that fades in on group-hover. All 4 corner ornaments now transition from navy to gold on hover.
+  - **Language screen logo glow aura** — added a radial-gradient glow div behind the logo (gold→orange→transparent, blur 8px) with a `logo-aura` 4s breathe animation (opacity 0.6→1 + scale 1→1.08). Verified element exists in DOM.
+- ENHANCED existing components:
+  - `Gallery.tsx` — added `useParallaxImg` hook, `imgRef` on each photo, swapped hover scale for brightness, baseline scale(1.12).
+  - `Rsvp.tsx` — added GoldenPetals import + render, `overflow-hidden` + `relative z-10` content wrapper.
+  - `Countdown.tsx` — added double-border frame wrapper with corner medallions around the countdown content.
+  - `EventDetail.tsx` — added hover gold glow overlay div + all corner ornaments transition to gold on hover.
+  - `LanguageScreen.tsx` — added logo glow aura div with `logo-aura` animation.
+  - `globals.css` — added `logo-aura` keyframe.
+
+Stage Summary:
+- All new features verified via agent-browser + VLM:
+  1. Gallery parallax: image transform changes on scroll (translateY +1.88px → -9.23px verified). ✓
+  2. RSVP ambient petals: VLM-confirmed "subtle golden floating petal/particle shapes." ✓
+  3. Countdown double-border frame: VLM-confirmed "outer navy + inner gold + corner medallions." ✓
+  4. Event card hover glow: gold glow overlay + corner ornaments turn gold on hover. ✓
+  5. Language screen logo aura: element exists with `logo-aura` animation. ✓
+  6. Mobile (390×844): countdown frame readable, no horizontal scroll, no overflow. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. All enhancements are integrated INTO existing sections / are micro-interactions. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map + batik images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- Notification reminder uses setTimeout (works while the page is open).
+- Parallax disabled on touch devices (intentional, for performance).
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add an elegant "table of contents" / chapter index overlay; (3) add a subtle "page enter" curtain animation when transitioning from envelope to main page; (4) consider adding a venue gallery sub-section (more venue photos).

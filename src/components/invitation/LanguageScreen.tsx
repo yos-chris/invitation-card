@@ -66,15 +66,26 @@ export function LanguageScreen({
           Modern Cancer Hospital Guangzhou
         </p>
 
-        {/* Logo with staggered entrance */}
+        {/* Logo with staggered entrance + soft glow aura */}
         <div
-          className="my-7 w-full max-w-[520px]"
+          className="relative my-7 w-full max-w-[520px]"
           style={{ animation: "scale-in 1.1s cubic-bezier(0.22,1,0.36,1) 0.4s both" }}
         >
+          {/* glow aura behind logo */}
+          <div
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[90%] -translate-x-1/2 -translate-y-1/2"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(200,164,93,0.22) 0%, rgba(240,120,0,0.08) 40%, transparent 70%)",
+              filter: "blur(8px)",
+              animation: "logo-aura 4s ease-in-out infinite",
+            }}
+            aria-hidden="true"
+          />
           <img
             src="/invitation/logo.png"
             alt="Modern Cancer Hospital Guangzhou — St. Stamford International Medical official logo"
-            className="mx-auto w-full max-w-[480px] select-none object-contain"
+            className="relative mx-auto w-full max-w-[480px] select-none object-contain"
             draggable={false}
           />
         </div>

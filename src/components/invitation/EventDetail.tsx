@@ -36,11 +36,20 @@ export function EventDetail({ lang }: { lang: Lang }) {
                       "inset 0 0 0 4px #f7f3ea, inset 0 0 0 5px rgba(3,31,68,0.25), 0 18px 40px -24px rgba(3,31,68,0.4)",
                   }}
                 >
+                  {/* hover gold glow overlay */}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{
+                      boxShadow:
+                        "0 0 24px -2px rgba(200,164,93,0.35), 0 0 0 1px rgba(200,164,93,0.4)",
+                    }}
+                    aria-hidden="true"
+                  />
                   {/* corner ornaments (navy) */}
-                  <span className="pointer-events-none absolute left-2 top-2 h-4 w-4 border-l border-t border-navy/40" />
-                  <span className="pointer-events-none absolute right-2 top-2 h-4 w-4 border-r border-t border-navy/40" />
-                  <span className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-b border-l border-navy/40" />
-                  <span className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-b border-r border-navy/40" />
+                  <span className="pointer-events-none absolute left-2 top-2 h-4 w-4 border-l border-t border-navy/40 transition-all duration-500 group-hover:border-gold/70" />
+                  <span className="pointer-events-none absolute right-2 top-2 h-4 w-4 border-r border-t border-navy/40 transition-all duration-500 group-hover:border-gold/70" />
+                  <span className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-b border-l border-navy/40 transition-all duration-500 group-hover:border-gold/70" />
+                  <span className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-b border-r border-navy/40 transition-all duration-500 group-hover:border-gold/70" />
 
                   {/* orange accent line top */}
                   <span className="absolute left-1/2 top-0 h-1 w-12 -translate-x-1/2 bg-orange" />

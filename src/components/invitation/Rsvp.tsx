@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { ClassicDivider, LotusMark, FrameCorners } from "./Ornaments";
 import { Reveal } from "./Reveal";
+import { GoldenPetals } from "./GoldenPetals";
 import { MessageCircle, Check, Sparkles } from "lucide-react";
 
 const WA_NUMBER = "6285710558888";
@@ -52,8 +53,11 @@ export function Rsvp({ lang, onConfirm }: { lang: Lang; onConfirm?: (name: strin
   };
 
   return (
-    <section id="rsvp" className="relative px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-2xl">
+    <section id="rsvp" className="relative overflow-hidden px-4 py-16 sm:py-20">
+      {/* Ambient golden petals in the RSVP section */}
+      <GoldenPetals count={8} opacity={0.18} speed={0.5} />
+
+      <div className="relative z-10 mx-auto max-w-2xl">
         <Reveal className="text-center">
           <LotusMark width={44} className="mx-auto mb-2" color="#C8A45D" />
           <h2 className="font-serif-inv text-3xl font-semibold text-navy sm:text-4xl">
