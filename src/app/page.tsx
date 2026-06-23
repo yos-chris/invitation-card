@@ -7,6 +7,7 @@ import { LanguageScreen } from "@/components/invitation/LanguageScreen";
 import { EnvelopeScreen } from "@/components/invitation/EnvelopeScreen";
 import { MainInvitation } from "@/components/invitation/MainInvitation";
 import { MusicToggle } from "@/components/invitation/MusicToggle";
+import { LoadingSplash } from "@/components/invitation/LoadingSplash";
 import { DICT } from "@/lib/i18n";
 
 type Stage = "language" | "envelope" | "main";
@@ -44,6 +45,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-[100dvh] w-full">
+      {/* Loading splash (auto-dismisses on load) */}
+      <LoadingSplash />
+
       {/* Stage transitions via fade */}
       <div
         className={stage === "language" ? "anim-fade-in" : "hidden"}

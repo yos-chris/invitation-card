@@ -1,10 +1,10 @@
 "use client";
 
 import { DICT, type Lang } from "@/lib/i18n";
-import { ClassicDivider, LotusMark } from "./Ornaments";
+import { ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
 import { EventActions } from "./EventActions";
-import { CalendarDays, Clock, MapPin, Phone } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Phone, Shirt } from "lucide-react";
 
 export function EventDetail({ lang }: { lang: Lang }) {
   const t = DICT[lang];
@@ -74,8 +74,27 @@ export function EventDetail({ lang }: { lang: Lang }) {
           })}
         </div>
 
-        {/* RSVP phone line */}
+        {/* Attire line */}
         <Reveal className="mt-8 flex items-center justify-center">
+          <div className="flex items-center gap-3 rounded-full border border-gold/50 bg-ivory/60 px-5 py-2.5 backdrop-blur-sm">
+            <Shirt className="h-4 w-4 text-royal" strokeWidth={1.5} />
+            <span className="font-cormorant text-xs uppercase tracking-[0.25em] text-navy/60">
+              {t.attireLabel}
+            </span>
+            <span className="h-3 w-px bg-navy/30" />
+            <span className="font-body-inv text-sm tracking-wide text-navy">
+              {t.attireValue}
+            </span>
+          </div>
+        </Reveal>
+
+        {/* Decorative floral accent */}
+        <div className="mt-6 flex justify-center">
+          <FloralSprig width={70} opacity={0.35} />
+        </div>
+
+        {/* RSVP phone line */}
+        <Reveal className="mt-6 flex items-center justify-center">
           <div
             className="flex flex-wrap items-center justify-center gap-3 border border-navy/30 bg-navy px-6 py-3 text-ivory"
             style={{ boxShadow: "inset 0 0 0 3px #031f44, inset 0 0 0 4px rgba(200,164,93,0.4)" }}

@@ -11,6 +11,7 @@ import { ClosingFooter } from "./ClosingFooter";
 import { FrameCorners, FloralSprig } from "./Ornaments";
 import { SectionBridge } from "./SectionBridge";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { SectionNav } from "./SectionNav";
 
 export function MainInvitation({
   lang,
@@ -72,15 +73,26 @@ export function MainInvitation({
       {/* language switcher (bottom-left) */}
       <LanguageSwitcher lang={lang} onChange={onLangChange} />
 
+      {/* section navigation dots (desktop right) */}
+      <SectionNav lang={lang} />
+
       <main className="relative z-10 flex flex-1 flex-col">
-        <Hero lang={lang} />
+        <div id="top">
+          <Hero lang={lang} />
+        </div>
         <Countdown lang={lang} />
         <SectionBridge />
-        <EventDetail lang={lang} />
+        <div id="sec-detail">
+          <EventDetail lang={lang} />
+        </div>
         <SectionBridge />
-        <Gallery lang={lang} />
+        <div id="sec-gallery">
+          <Gallery lang={lang} />
+        </div>
         <SectionBridge />
-        <Rsvp lang={lang} />
+        <div id="sec-rsvp">
+          <Rsvp lang={lang} />
+        </div>
         <ClosingFooter lang={lang} onReplay={onReplay} />
       </main>
     </div>

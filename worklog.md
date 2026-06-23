@@ -133,3 +133,42 @@ Unresolved issues / risks:
 - Gallery images are AI-generated placeholders. For a real event, these should be replaced with actual event photos. The AI images serve as convincing stand-ins.
 - Web Audio ambient music remains a generated pad.
 - Recommended next steps: (1) add a "dress code" or "attire suggestion" detail line within the event detail section (e.g., "Formal attire / Batik welcome"); (2) add a subtle parallax depth effect on the hero framed card; (3) consider a "wishes/guestbook" textarea integrated into the RSVP section; (4) add an elegant loading screen/splash while fonts load.
+
+---
+Task ID: 4
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + loading splash + section navigation + attire + parallax + countdown flip + styling enrichment.
+
+Work Log:
+- Reviewed worklog (Tasks 1–3) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified top improvements: loading experience, navigation ease, countdown micro-interactions, premium flourishes.
+- NEW COMPONENTS created in `src/components/invitation/`:
+  - `LoadingSplash.tsx` — elegant navy cinematic splash shown on first load. Lotus mark with shimmer, rotating thin gold arc spinner, hospital name tagline. Auto-dismisses on `window.load` (max 2.2s fallback) with a 700ms fade-out. Wired into `page.tsx` at z-100.
+  - `SectionNav.tsx` — elegant floating navigation dots (right side, desktop lg+ only). 4 dots: Invitation (top), Event Detail, Moments of Togetherness (gallery), RSVP. Active dot expands + turns orange with a glow ring; others are gold at 50% opacity. Hover/active reveals a tooltip pill with the section name. Smooth-scrolls on click. Tracks scroll position via passive scroll listener. Vertical gold gradient connector line behind dots.
+- NEW FEATURES:
+  - **Attire line** in EventDetail — elegant pill showing "ATTIRE | Formal · Batik welcome" (localized: id="Busana | Formal · Batik diterima", zh="着装 | 正装 · 欢迎穿着巴迪克"). With a Shirt icon and gold-bordered ivory pill.
+  - **Parallax tilt on hero card** — on desktop (non-touch), the framed hero card tilts up to ±4° toward the cursor via `perspective(1200px) rotateX/rotateY`, with a cursor-tracking gold radial glow overlay. Disabled on touch/coarse pointers. Smooth 0.4s transition.
+  - **Countdown flip animation** — each number is keyed by value, so when it changes React remounts the span and replays a `rotateX(90deg)→0` flip-in animation (0.4s cubic-bezier). Added a center crease line (flip-card crease), inner top sheen, and the lotus header now has a shimmer. Separators (`:`) now pulse (opacity + translateY) at 1.4s intervals.
+- ENHANCED existing components:
+  - `MainInvitation.tsx` — added `<SectionNav>`, wrapped each section in a div with id (`top`, `sec-detail`, `sec-gallery`, `sec-rsvp`) for scroll targeting.
+  - `EventDetail.tsx` — added attire pill + a decorative FloralSprig accent between the cards and RSVP phone bar; imported Shirt icon.
+- i18n (`src/lib/i18n.ts`) — added 3 new keys per language: `attireLabel`, `attireValue`, `navHero`. Also exported the `Dict` type for use in SectionNav.
+- `src/app/page.tsx` — added `<LoadingSplash>` at the top level.
+
+Stage Summary:
+- All new features verified via agent-browser:
+  1. Loading splash renders on reload (lotus + spinner + tagline on navy), then fades to the language screen. ✓
+  2. Section nav dots appear on desktop right side; clicking "RSVP Confirmation" smoothly scrolled to the RSVP section (scrollY 3224). ✓
+  3. Attire line "ATTIRE | Formal · Batik welcome" visible in Event Detail (VLM-confirmed). ✓
+  4. Countdown flip animation replays on each number change (keyed remount). ✓
+  5. Hero parallax tilt wired (desktop, non-touch). ✓
+  6. RSVP WhatsApp flow still works (Test User → wa.me/6285710558888 with correct message). ✓
+  7. Mobile (390×844): countdown readable, event detail + attire line readable, no horizontal scroll, no overflow. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. Section nav, attire, splash, parallax are utility controls / micro-interactions integrated INTO existing sections, not new sections. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery images remain AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- The loading splash auto-dismisses quickly (600ms–2.2s) so it's only visible briefly on load — intentional, but means it's hard to capture in a static screenshot.
+- Recommended next steps: (1) add a "wishes/guestbook" textarea integrated into the RSVP section with localStorage persistence; (2) add subtle gold confetti burst when the envelope fully opens; (3) add a "back to top" floating button on long scroll; (4) consider a print-optimized stylesheet for guests who want a printed invitation.

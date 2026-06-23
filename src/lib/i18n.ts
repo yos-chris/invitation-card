@@ -6,7 +6,7 @@ export const LANGS: { code: Lang; label: string; sub: string }[] = [
   { code: "zh", label: "中文", sub: "Chinese" },
 ];
 
-type Dict = {
+export type Dict = {
   chooseLang: string;
   enter: string;
   openInvitation: string;
@@ -69,6 +69,11 @@ type Dict = {
   galleryCaption4: string;
   galleryCaption5: string;
   galleryCaption6: string;
+  // attire
+  attireLabel: string;
+  attireValue: string;
+  // section nav labels
+  navHero: string;
 };
 
 const en: Dict = {
@@ -131,6 +136,9 @@ const en: Dict = {
   galleryCaption4: "Venue",
   galleryCaption5: "Anniversary",
   galleryCaption6: "Gratitude",
+  attireLabel: "Attire",
+  attireValue: "Formal · Batik welcome",
+  navHero: "Invitation",
 };
 
 const id: Dict = {
@@ -193,6 +201,9 @@ const id: Dict = {
   galleryCaption4: "Lokasi Acara",
   galleryCaption5: "Ulang Tahun",
   galleryCaption6: "Rasa Syukur",
+  attireLabel: "Busana",
+  attireValue: "Formal · Batik diterima",
+  navHero: "Undangan",
 };
 
 const zh: Dict = {
@@ -255,6 +266,9 @@ const zh: Dict = {
   galleryCaption4: "会场",
   galleryCaption5: "周年纪念",
   galleryCaption6: "感恩",
+  attireLabel: "着装",
+  attireValue: "正装 · 欢迎穿着巴迪克",
+  navHero: "邀请函",
 };
 
 export const DICT: Record<Lang, Dict> = { id, en, zh };
