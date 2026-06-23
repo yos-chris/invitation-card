@@ -380,3 +380,41 @@ Unresolved issues / risks:
 - Notification reminder uses setTimeout (works while the page is open).
 - Parallax disabled on touch devices (intentional, for performance).
 - Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add an elegant "table of contents" / chapter index overlay; (3) add a subtle "page enter" curtain animation when transitioning from envelope to main page; (4) consider adding a venue gallery sub-section (more venue photos).
+
+---
+Task ID: 10
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + cinematic page curtain transition + animated section bridge shimmer + music keyboard shortcut + music toggle UI sync.
+
+Work Log:
+- Reviewed worklog (Tasks 1–9) — project stable and feature-complete. Performed fresh QA via agent-browser (desktop + mobile). No bugs, no console errors.
+- VLM-driven QA identified final touches: page transitions, divider shimmer, footer animation, keyboard shortcuts.
+- NEW COMPONENTS in `src/components/invitation/`:
+  - `PageCurtain.tsx` — cinematic curtain-reveal overlay for the envelope → main page transition. Two navy panels slide apart (left/right, 1.2s cubic-bezier), a gold center seam glow pulses, and a lotus mark fades+expands in the center. Auto-dismisses via `onAnimationEnd`. Keyed remount to replay. CSS keyframes: `curtain-left`, `curtain-right`, `curtain-seam`, `curtain-lotus`.
+- NEW FEATURES:
+  - **Cinematic page curtain transition** — when "Open Invitation" is clicked, the PageCurtain mounts (keyed), the stage swaps to main at 250ms (mid-animation), and the curtain panels slide apart revealing the main page. Verified: main page loads after transition, no errors.
+  - **Animated section bridge shimmer** — enhanced `SectionBridge.tsx`: each side line now has an overlaid gold shimmer gradient that sweeps across (`bridge-shimmer` keyframe, 4s ease-in-out, staggered 1s/2.5s delays). Lotus mark gets `anim-shimmer`. Adds a subtle living quality to dividers.
+  - **Music keyboard shortcut** — press "M" anywhere (after language selection) to toggle ambient music. Ignores keypresses when typing in inputs/textareas/selects/contentEditable. Wired in `page.tsx` via global `keydown` listener.
+  - **Music toggle UI sync** — `MusicToggle.tsx` now polls the engine's `isPlaying` state every 600ms and syncs its local `on` state, so the icon/equalizer/aria-pressed stay in sync when music is toggled externally (e.g. via the "M" shortcut). Verified: pressing "M" changed aria-pressed from true→false→true and the VolumeX icon appeared.
+- ENHANCED existing components:
+  - `page.tsx` — added `curtainFire` state, `PageCurtain` mount (keyed, conditional on stage==="main"), global "M" keydown listener, `useEffect` import.
+  - `SectionBridge.tsx` — added shimmer overlay spans + `bridge-shimmer` keyframe + lotus `anim-shimmer`.
+  - `MusicToggle.tsx` — added polling effect to sync `on` state with engine `isPlaying`.
+
+Stage Summary:
+- All new features verified via agent-browser:
+  1. Page curtain: transition from envelope to main works, main page loads, no errors. (Curtain is a 1.2s transient animation.) ✓
+  2. Section bridge shimmer: gold shimmer sweeps across dividers (staggered). ✓
+  3. Music "M" shortcut: pressing M toggles the engine; aria-pressed changed true→false→true. ✓
+  4. Music toggle UI sync: VolumeX icon appears when music is off via shortcut; polling keeps UI in sync. ✓
+  5. Mobile (390×844): full flow works, no errors. ✓
+- Lint clean (`bun run lint` → no errors). Dev server running with no console/runtime errors.
+- Still only the 7 allowed sections. PageCurtain/SectionBridge shimmer/keyboard shortcut are utility transitions / micro-interactions, not new sections. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery + venue map + batik images are AI-generated stand-ins (acceptable; can be swapped for real event photos).
+- Web Audio ambient music remains a generated pad.
+- Guestbook wishes + reminder state are per-browser (localStorage).
+- Notification reminder uses setTimeout (works while the page is open).
+- Parallax disabled on touch devices (intentional, for performance).
+- Recommended next steps: (1) add a Service Worker for offline support + true background push notifications; (2) add an elegant "table of contents" / chapter index overlay; (3) add a venue gallery sub-section (more venue photos); (4) consider adding a subtle "easter egg" interaction on the footer medallions.

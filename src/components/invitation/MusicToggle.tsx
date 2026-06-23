@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { getMusicEngine } from "@/lib/music";
 
 export function MusicToggle({ label }: { label: string }) {
   // Music starts on language selection (before this toggle mounts), so default to on.
   const [on, setOn] = useState(true);
+
+  // Poll the engine state so the UI stays in sync if music is toggled
+  // externally (e.g. via the "M" keyboard shortcut).
+  useEffect(() => {
+    const id = setInterval(() => {
+      const eng = getMusicEngine();
+      if (eng && eng.isPlaying !== on) setOn(eng.isPlaying);
+    }, 600);
+    return () => clearInterval(id);
+  }, [on]);
 
   const toggle = () => {
     const eng = getMusicEngine();
