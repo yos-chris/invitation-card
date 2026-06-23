@@ -92,3 +92,44 @@ Unresolved issues / risks:
 - Gallery still uses styled placeholder panels (intentional). Real photos can replace `<GalleryPanel>` inner content later.
 - Web Audio ambient music remains a generated pad (reliable, no external files).
 - Recommended next steps: (1) generate real event imagery for the gallery via image-generation skill and swap into panels; (2) consider adding a subtle confetti/petal animation on the hero for celebratory feel; (3) add an optional "guestbook" of wishes if scope allows — though must respect the strict 7-section rule, so would integrate into RSVP section only.
+
+---
+Task ID: 3
+Agent: Z.ai Code (webDevReview cron)
+Task: QA pass + gallery real images + ambient animations + styling enrichment.
+
+Work Log:
+- Reviewed worklog (Tasks 1+2) — project was stable and feature-complete with countdown, calendar, share, language switcher, scroll-reveal, section bridges.
+- Performed fresh QA via agent-browser (desktop 1440×900 + mobile 390×844). No bugs, no console errors, no runtime errors.
+- VLM-driven QA identified remaining weaknesses: gallery still looked like placeholder boxes, not enough ambient animations, language screen could have more entrance animation.
+- Generated 6 AI gallery images using `z-ai image` CLI tool:
+  - `celebration.png` (1344×768) — elegant corporate anniversary ballroom
+  - `community.png` (1344×768) — healthcare community care
+  - `team.png` (864×1152) — professional medical team portrait
+  - `venue.png` (1344×768) — tropical resort hotel in Bali
+  - `anniversary.png` (1024×1024) — elegant anniversary cake
+  - `gratitude.png` (1024×1024) — hands in gratitude
+  - Saved to `public/invitation/gallery/`.
+- Rewrote `Gallery.tsx` — replaced placeholder `<GalleryPanel>` compositions with `<GalleryPhoto>` components that render real AI-generated photos as backgrounds (`object-cover` + zoom on hover) overlaid with: brand-cohesion color gradient (navy/royal/warm), gold inner frame, featured double-frame + "1" monogram, lotus watermark (scales on hover), gold corner ticks (expand on hover), caption slide-up, sheen sweep. Same editorial collage grid layout on desktop, varied cards on mobile.
+- Created `GoldenPetals.tsx` — ambient floating petal/particle canvas animation. Renders 3 shapes (petal ellipses, dots, spark diamonds) in gold color with configurable count/opacity/speed. Uses `requestAnimationFrame`, `devicePixelRatio` for retina, auto-resizes. Petals drift slowly downward with sinusoidal wobble, rotation, and wrapping.
+- Added `<GoldenPetals>` to:
+  - `Hero.tsx` — 14 particles, 0.25 opacity, 0.6 speed (fixed position so they float over the whole page)
+  - `EnvelopeScreen.tsx` — 10 particles, 0.18 opacity, 0.4 speed (subtle sparkle dust around the envelope)
+- Enhanced `LanguageScreen.tsx` with staggered entrance animations:
+  - Border-draw animation (clip-path inset reveal) on both decorative viewport borders
+  - Each element enters with a staggered `rise-up` animation (0.2s→1.6s delays): hospital name → logo (scale-in) → title → subtitle → divider → buttons → footer text
+  - Added a soft radial glow behind the logo area for depth
+- All changes verified via agent-browser + VLM.
+
+Stage Summary:
+- Gallery now shows real AI-generated photographs instead of placeholder boxes. VLM confirmed: "real photographs… impressive and premium… cohesive design." ✓
+- Golden floating petals are visible on both the envelope screen and the hero/main page. VLM confirmed: "subtle golden floating petal/particle shapes visible… premium and cinematic." ✓
+- Language screen has staggered entrance animations and border-draw reveal. ✓
+- Mobile gallery rated 8/10 by VLM — real photos visible, clean layout, no horizontal scroll. ✓
+- Lint clean, dev server running with no errors. ✓
+- Still only the 7 allowed sections. No agenda, speakers, seat map, why-attend, timeline/journey, section numbering, or random AI symbols.
+
+Unresolved issues / risks:
+- Gallery images are AI-generated placeholders. For a real event, these should be replaced with actual event photos. The AI images serve as convincing stand-ins.
+- Web Audio ambient music remains a generated pad.
+- Recommended next steps: (1) add a "dress code" or "attire suggestion" detail line within the event detail section (e.g., "Formal attire / Batik welcome"); (2) add a subtle parallax depth effect on the hero framed card; (3) consider a "wishes/guestbook" textarea integrated into the RSVP section; (4) add an elegant loading screen/splash while fonts load.

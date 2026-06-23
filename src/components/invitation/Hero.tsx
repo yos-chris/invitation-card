@@ -3,11 +3,15 @@
 import { DICT, type Lang } from "@/lib/i18n";
 import { FrameCorners, ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
+import { GoldenPetals } from "./GoldenPetals";
 
 export function Hero({ lang }: { lang: Lang }) {
   const t = DICT[lang];
   return (
-    <section className="relative px-4 pt-10 sm:pt-16">
+    <section className="relative overflow-hidden px-4 pt-10 sm:pt-16">
+      {/* Floating golden petals for celebratory ambiance */}
+      <GoldenPetals count={14} opacity={0.25} speed={0.6} className="!fixed" style={{ position: "fixed" }} />
+
       <div className="relative mx-auto max-w-3xl">
         {/* framed invitation card */}
         <Reveal className="frame-classic relative bg-white/60 px-6 py-10 text-center shadow-[0_30px_70px_-30px_rgba(3,31,68,0.45)] sm:px-12 sm:py-14">

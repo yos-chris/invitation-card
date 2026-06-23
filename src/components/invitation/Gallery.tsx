@@ -4,122 +4,112 @@ import { DICT, type Lang } from "@/lib/i18n";
 import { ClassicDivider, LotusMark, FloralSprig } from "./Ornaments";
 import { Reveal } from "./Reveal";
 
-/*
-  Gallery — elegant editorial collage with artistic placeholder panels.
-  These panels are styled compositions (NOT generated photos). To use real
-  photos later, replace the inner content of <GalleryPanel> with <img>.
-  Internal labels (not visible to visitors):
-    panel-1: hero moment / celebration   (featured large)
-    panel-2: care & community
-    panel-3: team portrait
-    panel-4: venue ambiance
-    panel-5: anniversary cake
-    panel-6: gratitude
-*/
+const gold = "#C8A45D";
 
-function GalleryPanel({
+/* Real AI-generated gallery images */
+const GALLERY_IMAGES = [
+  { src: "/invitation/gallery/celebration.png", alt: "Celebration" },
+  { src: "/invitation/gallery/community.png", alt: "Care & Community" },
+  { src: "/invitation/gallery/team.png", alt: "Our Team" },
+  { src: "/invitation/gallery/venue.png", alt: "Venue" },
+  { src: "/invitation/gallery/anniversary.png", alt: "Anniversary" },
+  { src: "/invitation/gallery/gratitude.png", alt: "Gratitude" },
+];
+
+function GalleryPhoto({
   className,
-  tone = "navy",
+  src,
+  alt,
   caption,
   featured = false,
   delay = 0,
+  overlay = "navy",
 }: {
   className?: string;
-  tone?: "navy" | "royal" | "ivory" | "gold";
+  src: string;
+  alt: string;
   caption?: string;
   featured?: boolean;
   delay?: number;
+  overlay?: "navy" | "royal" | "warm";
 }) {
-  const bg =
-    tone === "navy"
-      ? "linear-gradient(155deg, #0a2c5e 0%, #031f44 60%, #02152f 100%)"
-      : tone === "royal"
-        ? "linear-gradient(155deg, #1a3f8f 0%, #123083 60%, #0a2366 100%)"
-        : tone === "gold"
-          ? "linear-gradient(155deg, #d9b978 0%, #c8a45d 60%, #a8853f 100%)"
-          : "linear-gradient(155deg, #fbf7ee 0%, #f1e9d6 100%)";
-  const fg = tone === "ivory" ? "#031F44" : "#F7F3EA";
-  const gold = "#C8A45D";
+  const overlayGradient =
+    overlay === "navy"
+      ? "linear-gradient(180deg, rgba(3,31,68,0.15) 0%, rgba(3,31,68,0.55) 100%)"
+      : overlay === "royal"
+        ? "linear-gradient(180deg, rgba(18,48,131,0.12) 0%, rgba(18,48,131,0.5) 100%)"
+        : "linear-gradient(180deg, rgba(200,164,93,0.12) 0%, rgba(240,120,0,0.25) 100%)";
 
   return (
     <Reveal
       delay={delay}
       className={`photo-frame group relative overflow-hidden ${className ?? ""}`}
     >
-      <div className="absolute inset-0" style={{ background: bg }} />
+      {/* Real photo background */}
+      <img
+        src={src}
+        alt={alt}
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
+        draggable={false}
+        loading="lazy"
+      />
+
+      {/* Color overlay for brand cohesion */}
+      <div className="pointer-events-none absolute inset-0" style={{ background: overlayGradient }} />
+
       {/* inner gold frame */}
       <div
         className="pointer-events-none absolute inset-2 border"
-        style={{ borderColor: `${gold}${tone === "ivory" ? "55" : "66"}` }}
+        style={{ borderColor: `${gold}55` }}
       />
       {featured ? (
-        <div
-          className="pointer-events-none absolute inset-4 border"
-          style={{ borderColor: `${gold}44` }}
-        />
+        <div className="pointer-events-none absolute inset-4 border" style={{ borderColor: `${gold}40` }} />
       ) : null}
-      {/* paper grain */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-30"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
-        }}
-      />
-      {/* radial vignette for depth */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.28) 100%)",
-        }}
-      />
-      {/* lotus watermark center — scales on hover */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <LotusMark
-          width={featured ? 110 : 64}
-          color={gold}
-          className="opacity-30 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125"
-        />
-      </div>
+
       {/* featured monogram overlay */}
       {featured ? (
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="font-serif-inv text-7xl font-bold opacity-10 sm:text-8xl"
-            style={{ color: fg }}
+            className="font-serif-inv text-8xl font-bold opacity-[0.08] sm:text-9xl"
+            style={{ color: "#F7F3EA" }}
           >
             1
           </span>
         </div>
       ) : null}
+
+      {/* lotus watermark — scales on hover */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <LotusMark
+          width={featured ? 100 : 56}
+          color={gold}
+          className="opacity-25 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125 group-hover:opacity-35"
+        />
+      </div>
+
       {/* corner ticks (decorative) */}
-      <span className="absolute left-3 top-3 h-3.5 w-3.5 border-l border-t transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}aa` }} />
-      <span className="absolute right-3 top-3 h-3.5 w-3.5 border-r border-t transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}aa` }} />
-      <span className="absolute bottom-3 left-3 h-3.5 w-3.5 border-b border-l transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}aa` }} />
-      <span className="absolute bottom-3 right-3 h-3.5 w-3.5 border-b border-r transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}aa` }} />
+      <span className="absolute left-3 top-3 h-3.5 w-3.5 border-l border-t transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}bb` }} />
+      <span className="absolute right-3 top-3 h-3.5 w-3.5 border-r border-t transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}bb` }} />
+      <span className="absolute bottom-3 left-3 h-3.5 w-3.5 border-b border-l transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}bb` }} />
+      <span className="absolute bottom-3 right-3 h-3.5 w-3.5 border-b border-r transition-all duration-500 group-hover:h-5 group-hover:w-5" style={{ borderColor: `${gold}bb` }} />
+
       {/* caption — slides up on hover (desktop) / always visible (mobile) */}
       {caption ? (
         <div className="absolute inset-x-0 bottom-0 translate-y-0 p-3 text-center transition-transform duration-500 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
-          <div
-            className="mx-auto inline-block px-3 py-1"
-            style={{ background: tone === "ivory" ? "rgba(3,31,68,0.85)" : "rgba(3,31,68,0.7)" }}
-          >
-            <span
-              className="font-cormorant text-[10px] uppercase tracking-[0.3em] sm:text-xs"
-              style={{ color: fg }}
-            >
+          <div className="mx-auto inline-block bg-navy/75 px-3 py-1 backdrop-blur-sm">
+            <span className="font-cormorant text-[10px] uppercase tracking-[0.3em] text-ivory sm:text-xs">
               {caption}
             </span>
           </div>
         </div>
       ) : null}
-      {/* hover sheen */}
+
+      {/* hover sheen sweep */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
         style={{
           background:
-            "linear-gradient(135deg, rgba(200,164,93,0.18) 0%, transparent 50%, rgba(240,120,0,0.12) 100%)",
+            "linear-gradient(135deg, rgba(200,164,93,0.22) 0%, transparent 50%, rgba(240,120,0,0.15) 100%)",
         }}
       />
     </Reveal>
@@ -128,6 +118,7 @@ function GalleryPanel({
 
 export function Gallery({ lang }: { lang: Lang }) {
   const t = DICT[lang];
+  const imgs = GALLERY_IMAGES;
   return (
     <section className="relative px-4 py-16 sm:py-20">
       {/* faint navy band backdrop for depth */}
@@ -144,63 +135,106 @@ export function Gallery({ lang }: { lang: Lang }) {
           <ClassicDivider className="mx-auto mt-5 max-w-[240px]" color="#031F44" />
         </Reveal>
 
-        {/* Editorial collage grid (desktop) — featured large + varied spans */}
+        {/* Desktop: editorial collage grid with real photos */}
         <div className="mt-10 hidden grid-cols-6 gap-4 sm:grid" style={{ gridAutoRows: "160px" }}>
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-3 row-span-3"
-            tone="navy"
+            src={imgs[0].src}
+            alt={imgs[0].alt}
             caption={t.galleryCaption1}
             featured
             delay={0}
+            overlay="navy"
           />
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-3 row-span-1"
-            tone="royal"
+            src={imgs[1].src}
+            alt={imgs[1].alt}
             caption={t.galleryCaption2}
             delay={80}
+            overlay="royal"
           />
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-1 row-span-1"
-            tone="ivory"
+            src={imgs[2].src}
+            alt={imgs[2].alt}
             delay={160}
+            overlay="warm"
           />
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-2 row-span-2"
-            tone="gold"
-            caption={t.galleryCaption3}
-            delay={240}
-          />
-          <GalleryPanel
-            className="col-span-2 row-span-1"
-            tone="navy"
+            src={imgs[3].src}
+            alt={imgs[3].alt}
             caption={t.galleryCaption4}
-            delay={120}
+            delay={240}
+            overlay="royal"
           />
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-2 row-span-1"
-            tone="ivory"
+            src={imgs[4].src}
+            alt={imgs[4].alt}
             caption={t.galleryCaption5}
-            delay={200}
+            delay={120}
+            overlay="warm"
           />
-          <GalleryPanel
+          <GalleryPhoto
             className="col-span-2 row-span-1"
-            tone="royal"
+            src={imgs[5].src}
+            alt={imgs[5].alt}
             caption={t.galleryCaption6}
-            delay={280}
+            delay={200}
+            overlay="navy"
           />
         </div>
 
-        {/* Mobile: stacked elegant cards with varied aspect ratios */}
+        {/* Mobile: stacked elegant cards with real photos */}
         <div className="mt-8 flex flex-col gap-4 sm:hidden">
-          <GalleryPanel className="aspect-[4/3]" tone="navy" caption={t.galleryCaption1} featured />
+          <GalleryPhoto
+            className="aspect-[4/3]"
+            src={imgs[0].src}
+            alt={imgs[0].alt}
+            caption={t.galleryCaption1}
+            featured
+            overlay="navy"
+          />
           <div className="grid grid-cols-2 gap-4">
-            <GalleryPanel className="aspect-square" tone="royal" caption={t.galleryCaption2} />
-            <GalleryPanel className="aspect-square" tone="gold" caption={t.galleryCaption3} />
+            <GalleryPhoto
+              className="aspect-square"
+              src={imgs[1].src}
+              alt={imgs[1].alt}
+              caption={t.galleryCaption2}
+              overlay="royal"
+            />
+            <GalleryPhoto
+              className="aspect-square"
+              src={imgs[2].src}
+              alt={imgs[2].alt}
+              caption={t.galleryCaption3}
+              overlay="warm"
+            />
           </div>
-          <GalleryPanel className="aspect-[4/3]" tone="ivory" caption={t.galleryCaption5} />
+          <GalleryPhoto
+            className="aspect-[4/3]"
+            src={imgs[3].src}
+            alt={imgs[3].alt}
+            caption={t.galleryCaption4}
+            overlay="navy"
+          />
           <div className="grid grid-cols-2 gap-4">
-            <GalleryPanel className="aspect-square" tone="navy" caption={t.galleryCaption4} />
-            <GalleryPanel className="aspect-square" tone="royal" caption={t.galleryCaption6} />
+            <GalleryPhoto
+              className="aspect-square"
+              src={imgs[4].src}
+              alt={imgs[4].alt}
+              caption={t.galleryCaption5}
+              overlay="warm"
+            />
+            <GalleryPhoto
+              className="aspect-square"
+              src={imgs[5].src}
+              alt={imgs[5].alt}
+              caption={t.galleryCaption6}
+              overlay="royal"
+            />
           </div>
         </div>
 

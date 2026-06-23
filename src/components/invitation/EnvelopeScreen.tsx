@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DICT, cardFor, type Lang } from "@/lib/i18n";
 import { LotusMark, ClassicDivider } from "./Ornaments";
+import { GoldenPetals } from "./GoldenPetals";
 
 type Phase = "enter" | "flap" | "rise-half" | "rise-full" | "focus" | "ready";
 
@@ -66,6 +67,9 @@ export function EnvelopeScreen({
     >
       {/* spotlight behind envelope */}
       <div className="spotlight pointer-events-none absolute left-1/2 top-[42%] h-[70%] w-[80%] -translate-x-1/2 -translate-y-1/2" />
+
+      {/* golden sparkle dust floating around envelope */}
+      <GoldenPetals count={10} opacity={0.18} speed={0.4} />
 
       {/* faint lotus watermark */}
       <LotusMark
