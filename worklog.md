@@ -797,3 +797,19 @@ Stage Summary:
 - Opening page: original colored logo restored ✓
 - Footer: white logo without circular seal ✓
 - Lint clean. Dev server running with no errors.
+
+---
+Task ID: 22
+Agent: Z.ai Code (revision — hero logo colored, footer logo centered)
+Task: Make hero logo colored (like opening page). Center the footer white logo.
+
+Work Log:
+- HERO LOGO → COLORED: Changed `Hero.tsx` logo src from `/invitation/logo-white.png` to `/invitation/logo.png` (original colored logo). VLM-confirmed: "original colored version, blue/orange emblem, colored text" ✓
+- FOOTER LOGO → CENTERED: Added `mx-auto block` classes to the footer logo `<img>` in `ClosingFooter.tsx` (already inside `flex flex-col items-center`). VLM-confirmed: "white logo is centered horizontally, no circular seal" ✓
+- Footer logo remains white without seal (`logo-white-noseal.png`).
+
+Stage Summary:
+- Hero (top of main page): original colored logo ✓
+- Footer (bottom of main page): white logo, no seal, centered ✓
+- Opening page: original colored logo (unchanged from Task 21) ✓
+- Lint clean. Dev server running with no errors.

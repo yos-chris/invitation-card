@@ -78,7 +78,7 @@ export function Hero({ lang }: { lang: Lang }) {
             {/* logo */}
             <div className="mx-auto mb-6 w-full max-w-[360px]">
               <img
-                src="/invitation/logo-white.png"
+                src="/invitation/logo.png"
                 alt="Modern Cancer Hospital Guangzhou — St. Stamford International Medical"
                 className="mx-auto w-full select-none object-contain"
                 draggable={false}

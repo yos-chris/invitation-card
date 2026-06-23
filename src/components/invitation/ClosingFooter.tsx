@@ -128,7 +128,7 @@ export function ClosingFooter({
             <img
               src="/invitation/logo-white-noseal.png"
               alt="Modern Cancer Hospital Guangzhou — St. Stamford International Medical"
-              className="w-full max-w-[280px] select-none object-contain opacity-90"
+              className="mx-auto block w-full max-w-[280px] select-none object-contain opacity-90"
               draggable={false}
             />
             <p className="font-cormorant text-xs uppercase tracking-[0.25em] text-gold/80">
