@@ -858,3 +858,32 @@ Stage Summary:
 - Settings panel accessible via gear icon (top-left).
 - Code input on opening page between invitation text and language buttons.
 - All codes + settings persist in localStorage.
+
+---
+Task ID: 24
+Agent: Z.ai Code (URL-based guest personalization)
+Task: Simple URL-based personalization — add ?to=Name to the link, page shows guest name. No codes, no settings panel. Normal visit = no name.
+
+Work Log:
+- Removed the complex code/settings system (InvitationSettings, invitation-codes.ts) from the opening page.
+- Reverted LanguageScreen to the clean original layout.
+- Added simple URL-based guest name personalization:
+  - Reads `?to=`, `?name=`, or `?guest=` from URL query params.
+  - Decodes + capitalizes first letter of each word.
+  - If name present: shows "Dear, [Name]" in an elegant pill badge (with User icon) where the "We warmly invite you..." text normally sits.
+  - If no name (normal visit): shows the standard "We warmly invite you to celebrate one year..." text.
+  - SSR-safe lazy initializer (no setState in effect).
+- How to use: just append `?to=GuestName` to the invitation URL when sharing. Examples:
+  - Normal: https://yoursite.com/ → standard text
+  - Personal: https://yoursite.com/?to=Budi → "Dear, Budi"
+  - Personal: https://yoursite.com/?to=Marlyne → "Dear, Marlyne"
+- Verified:
+  1. Normal visit (no ?to=): standard "We warmly invite you..." text, no name ✓
+  2. ?to=Budi Santoso: shows "Dear, Budi Santoso" badge ✓
+- Lint clean. Dev server running with no errors.
+
+Stage Summary:
+- Super simple: just add ?to=Name to the URL. No codes, no settings, no login.
+- Normal visit = normal page (no name).
+- Personalized link = guest name shown.
+- The host just shares links like: https://yoursite.com/?to=John+Smith

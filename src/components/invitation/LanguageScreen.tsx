@@ -3,66 +3,40 @@
 import { useState } from "react";
 import { LANGS, type Lang } from "@/lib/i18n";
 import { FrameCorners, ClassicDivider, FloralSprig, LotusMark } from "./Ornaments";
-import { InvitationSettings } from "./InvitationSettings";
-import { validateCode, getCodeFromUrl, markCodeUsed, isPrivateMode } from "@/lib/invitation-codes";
-import { Lock, Check, X } from "lucide-react";
+import { User } from "lucide-react";
+
+/* Read guest name from URL ?to=Name — simple URL-based personalization.
+   No codes, no settings. Just add ?to=John to the link you share.
+   If empty, the page is normal with no guest name. */
+function getGuestName(): string {
+  if (typeof window === "undefined") return "";
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("to") || params.get("name") || params.get("guest");
+  if (!name) return "";
+  // Decode and capitalize first letter of each word
+  try {
+    const decoded = decodeURIComponent(name).trim();
+    return decoded
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  } catch {
+    return name.trim();
+  }
+}
 
 export function LanguageScreen({
   onSelect,
 }: {
   onSelect: (lang: Lang) => void;
 }) {
-  // SSR-safe lazy initializers for URL code + private mode
-  const [urlCodeChecked] = useState<{ code: string; valid: boolean; guestName?: string }>(() => {
-    if (typeof window === "undefined") return { code: "", valid: false };
-    const urlCode = getCodeFromUrl();
-    if (urlCode) {
-      const result = validateCode(urlCode);
-      if (result.valid) {
-        markCodeUsed(urlCode);
-        return { code: urlCode, valid: true, guestName: result.guestName };
-      }
-    }
-    return { code: "", valid: false };
-  });
-  const [showCodeInput, setShowCodeInput] = useState(false);
-  const [codeValue, setCodeValue] = useState(urlCodeChecked.code);
-  const [codeError, setCodeError] = useState("");
-  const [codeValid, setCodeValid] = useState(urlCodeChecked.valid);
-  const [guestName, setGuestName] = useState<string | null>(urlCodeChecked.guestName ?? null);
-  const [privateOn, setPrivateOn] = useState(() =>
-    typeof window !== "undefined" ? isPrivateMode() : false,
+  // SSR-safe lazy initializer
+  const [guestName] = useState<string>(() =>
+    typeof window !== "undefined" ? getGuestName() : "",
   );
-
-  const handleCodeSubmit = () => {
-    if (!codeValue.trim()) return;
-    const result = validateCode(codeValue);
-    if (result.valid) {
-      setCodeValid(true);
-      setCodeError("");
-      setGuestName(result.guestName ?? null);
-      markCodeUsed(codeValue);
-    } else {
-      setCodeError("Invalid invitation code. Please check and try again.");
-      setCodeValid(false);
-    }
-  };
-
-  const handleSelect = (lang: Lang) => {
-    // If private mode is on and code not valid, don't proceed
-    if (privateOn && !codeValid) {
-      setShowCodeInput(true);
-      setCodeError("Please enter your invitation code to continue.");
-      return;
-    }
-    onSelect(lang);
-  };
 
   return (
     <div className="paper-ivory relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden px-4 py-10">
-      {/* Settings gear (top-left) */}
-      <InvitationSettings />
-
       {/* Animated border reveal — outer draws in, then inner */}
       <div
         className="pointer-events-none absolute inset-3 border border-navy/40 sm:inset-5"
@@ -160,79 +134,29 @@ export function LanguageScreen({
         >
           Bali Office
         </p>
-        <p
-          className="mt-3 max-w-md font-body-inv text-sm leading-relaxed text-navy/70"
-          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 1s both" }}
-        >
-          We warmly invite you to celebrate one year of gratitude, care, and
-          togetherness.
-        </p>
 
-        {/* === PRIVATE INVITATION CODE SECTION === */}
-        <div
-          className="mt-5 w-full max-w-xs"
-          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 1.05s both" }}
-        >
-          {codeValid ? (
-            /* Code validated — show guest greeting */
-            <div className="flex items-center justify-center gap-2 rounded-full border border-orange/40 bg-orange/5 px-4 py-2">
-              <Check className="h-3.5 w-3.5 text-orange" strokeWidth={1.5} />
-              <span className="font-cormorant text-xs tracking-[0.15em] text-navy/70">
-                {guestName ? `Welcome, ${guestName}` : "Welcome, Guest"}
+        {/* === PERSONALIZED GREETING (URL-based: ?to=GuestName) === */}
+        {guestName ? (
+          <div
+            className="mt-4 flex items-center justify-center gap-2"
+            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
+          >
+            <div className="flex items-center gap-2 rounded-full border border-gold/50 bg-ivory/50 px-5 py-2 backdrop-blur-sm">
+              <User className="h-3.5 w-3.5 text-orange" strokeWidth={1.5} />
+              <span className="font-cormorant text-sm tracking-[0.15em] text-navy/75">
+                Dear, <span className="font-serif-inv font-semibold text-navy">{guestName}</span>
               </span>
             </div>
-          ) : (
-            /* Code input or toggle */
-            <div className="flex flex-col items-center gap-2">
-              {showCodeInput ? (
-                <div className="w-full">
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <Lock className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy/40" strokeWidth={1.5} />
-                      <input
-                        type="text"
-                        value={codeValue}
-                        onChange={(e) => {
-                          setCodeValue(e.target.value.toUpperCase());
-                          setCodeError("");
-                        }}
-                        onKeyDown={(e) => e.key === "Enter" && handleCodeSubmit()}
-                        placeholder="Invitation code"
-                        maxLength={20}
-                        className="w-full rounded-full border border-navy/30 bg-white/60 py-2 pl-9 pr-3 text-center font-body-inv text-sm uppercase tracking-[0.15em] text-navy placeholder:normal-case placeholder:tracking-normal placeholder:text-navy/35 focus:border-orange focus:outline-none focus:ring-2 focus:ring-gold/30"
-                        autoFocus
-                      />
-                    </div>
-                    <button
-                      onClick={handleCodeSubmit}
-                      className="btn-pill solid-navy px-4 py-2 text-xs"
-                    >
-                      OK
-                    </button>
-                    <button
-                      onClick={() => { setShowCodeInput(false); setCodeError(""); }}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-navy/40 hover:text-orange"
-                      aria-label="Cancel"
-                    >
-                      <X className="h-4 w-4" strokeWidth={1.5} />
-                    </button>
-                  </div>
-                  {codeError ? (
-                    <p className="mt-1.5 text-center text-xs text-orange">{codeError}</p>
-                  ) : null}
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowCodeInput(true)}
-                  className="flex items-center gap-1.5 rounded-full border border-gold/50 bg-ivory/40 px-4 py-2 font-cormorant text-xs uppercase tracking-[0.2em] text-navy/60 transition-all hover:border-orange hover:text-orange"
-                >
-                  <Lock className="h-3 w-3" strokeWidth={1.5} />
-                  {privateOn ? "Enter invitation code" : "I have an invitation code"}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <p
+            className="mt-3 max-w-md font-body-inv text-sm leading-relaxed text-navy/70"
+            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 1s both" }}
+          >
+            We warmly invite you to celebrate one year of gratitude, care, and
+            togetherness.
+          </p>
+        )}
 
         <ClassicDivider
           className="my-6 max-w-xs"
@@ -250,7 +174,7 @@ export function LanguageScreen({
           {LANGS.map((l, i) => (
             <button
               key={l.code}
-              onClick={() => handleSelect(l.code)}
+              onClick={() => onSelect(l.code)}
               className="btn-pill flex-1 sm:flex-none"
               style={{ animation: `rise-up 0.8s cubic-bezier(0.22,1,0.36,1) ${1.2 + i * 0.1}s both` }}
             >
