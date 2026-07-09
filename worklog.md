@@ -813,3 +813,48 @@ Stage Summary:
 - Footer (bottom of main page): white logo, no seal, centered ✓
 - Opening page: original colored logo (unchanged from Task 21) ✓
 - Lint clean. Dev server running with no errors.
+
+---
+Task ID: 23
+Agent: Z.ai Code (private invitation system)
+Task: Add private invitation system with settings panel, custom codes, and share feature on the opening page.
+
+Work Log:
+- Created `src/lib/invitation-codes.ts` — full code management system:
+  - `InvitationCode` type (code, guestName, used, createdAt).
+  - localStorage persistence (`bali-anniversary-invitation-codes-v1`).
+  - 3 seed codes: BALI2026 (VIP Guest), STAMFORD (St. Stamford Partner), MARLYNE (Marlyne).
+  - `getCodes()`, `addCode()`, `removeCode()`, `validateCode()`, `markCodeUsed()`.
+  - `generateShareLink(code)` → returns URL with `?code=XXXX`.
+  - `getCodeFromUrl()` → reads code from URL query param.
+  - `isPrivateMode()` / `setPrivateMode()` — toggle requiring code to enter.
+- Created `src/components/invitation/InvitationSettings.tsx` — settings panel:
+  - Gear icon button (top-left, fixed).
+  - Modal dialog with: Private Mode toggle (ON/OFF), Create New Code form (code + guest name + Add), Code list with Share (copy link) + Delete buttons per code, info note about URL sharing.
+  - Codes show "✓ opened" when used.
+  - Share copies the invitation URL with ?code=XXXX to clipboard.
+- Updated `src/components/invitation/LanguageScreen.tsx`:
+  - Added InvitationSettings (gear icon).
+  - Added invitation code section between "We warmly invite you..." text and "Select your language" buttons:
+    - "I have an invitation code" button (or "Enter invitation code" if private mode is ON).
+    - Click reveals code input (with Lock icon, uppercase, OK + Cancel buttons).
+    - Valid code → shows "Welcome, [Guest Name]" badge with checkmark.
+    - Invalid code → shows error message.
+    - URL `?code=XXXX` auto-validates on page load and marks code as used.
+  - If private mode is ON and code not valid, language buttons are blocked (shows code input instead).
+- Verified:
+  1. Code input button visible on opening page below invitation text, above language buttons ✓
+  2. Settings gear opens panel with code management ✓
+  3. Created GUEST001/John Test code → appears in list ✓
+  4. Share button copies link with ?code=XXXX ✓
+  5. URL ?code=BALI2026 auto-validates → "Welcome, VIP Guest" badge ✓
+  6. Manual code input MARLYNE → "Welcome, Marlyne" badge ✓
+  7. Invalid code → error message ✓
+  8. Mobile: code button + settings gear visible, no layout issues ✓
+- Lint clean. Dev server running with no errors.
+
+Stage Summary:
+- Private invitation system fully functional: create codes, customize guest names, share links, validate via URL or manual input, toggle private mode.
+- Settings panel accessible via gear icon (top-left).
+- Code input on opening page between invitation text and language buttons.
+- All codes + settings persist in localStorage.
