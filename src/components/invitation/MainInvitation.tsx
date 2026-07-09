@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DICT, type Lang } from "@/lib/i18n";
+import { DICT, cardFor, type Lang } from "@/lib/i18n";
 import { Hero } from "./Hero";
 import { Countdown } from "./Countdown";
 import { EventDetail } from "./EventDetail";
@@ -57,8 +57,18 @@ export function MainInvitation({
 
   return (
     <div className="paper-ivory relative flex min-h-[100dvh] w-full flex-col">
-      {/* Confetti burst overlay (keyed so it can re-fire) */}
-      <ConfettiBurst key={confettiKey} fire={fireConfetti} />
+      {/* Print-only card image */}
+      <div className="hidden print:block print:w-full print:bg-white">
+        <img
+          src={cardFor(lang)}
+          alt="Printed Invitation"
+          className="mx-auto block h-[95vh] w-auto max-w-full object-contain"
+        />
+      </div>
+
+      <div className="print:hidden flex flex-col flex-1">
+        {/* Confetti burst overlay (keyed so it can re-fire) */}
+        <ConfettiBurst key={confettiKey} fire={fireConfetti} />
 
       {/* Scroll progress indicator */}
       <ScrollProgress />
@@ -140,6 +150,7 @@ export function MainInvitation({
         </div>
         <ClosingFooter lang={lang} onReplay={onReplay} />
       </main>
+      </div>
     </div>
   );
 }

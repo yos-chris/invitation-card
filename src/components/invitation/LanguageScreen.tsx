@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { LANGS, type Lang } from "@/lib/i18n";
 import { FrameCorners, ClassicDivider, FloralSprig, LotusMark } from "./Ornaments";
-import { User } from "lucide-react";
+
 
 /* Read guest name from URL ?to=Name — simple URL-based personalization.
    No codes, no settings. Just add ?to=John to the link you share.
@@ -138,13 +138,15 @@ export function LanguageScreen({
         {/* === PERSONALIZED GREETING (URL-based: ?to=GuestName) === */}
         {guestName ? (
           <div
-            className="mt-4 flex items-center justify-center gap-2"
+            className="mt-4 flex flex-col items-center gap-1.5"
             style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
           >
-            <div className="flex items-center gap-2 rounded-full border border-gold/50 bg-ivory/50 px-5 py-2 backdrop-blur-sm">
-              <User className="h-3.5 w-3.5 text-orange" strokeWidth={1.5} />
-              <span className="font-cormorant text-sm tracking-[0.15em] text-navy/75">
-                Dear, <span className="font-serif-inv font-semibold text-navy">{guestName}</span>
+            <div className="flex flex-col items-center gap-1 rounded-xl border border-gold/50 bg-ivory/50 px-8 py-3.5 backdrop-blur-sm">
+              <span className="font-cormorant text-xs uppercase tracking-[0.2em] text-navy/60">
+                Dear
+              </span>
+              <span className="font-serif-inv text-2xl font-bold tracking-wide text-navy sm:text-3xl">
+                {guestName}
               </span>
             </div>
           </div>
