@@ -5,7 +5,7 @@ import { DICT, type Lang } from "@/lib/i18n";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ClassicDivider, LotusMark, FrameCorners } from "./Ornaments";
+import { FrameCorners } from "./Ornaments";
 import { Reveal } from "./Reveal";
 import { SectionTitle } from "./SectionTitle";
 import { Send, Heart, MessageSquareQuote } from "lucide-react";
@@ -14,51 +14,12 @@ type Wish = {
   id: string;
   name: string;
   message: string;
-  ts: number;
+  createdAt: string;
 };
 
-const STORAGE_KEY = "bali-anniversary-wishes-v1";
-
-// A few seed wishes so the guestbook never looks empty on first visit
-const SEED_WISHES: Wish[] = [
-  {
-    id: "seed-1",
-    name: "dr. Linda Hartono",
-    message:
-      "Selamat satu tahun! Semoga Bali Office terus berkembang dan membawa kehangatan bagi pasien. — Selalu di hati.",
-    ts: Date.now() - 86400000 * 3,
-  },
-  {
-    id: "seed-2",
-    name: "Marlyne",
-    message:
-      "Thank you for being part of our first year. Your trust and care mean everything to us. We look forward to celebrating together.",
-    ts: Date.now() - 86400000 * 1,
-  },
-  {
-    id: "seed-3",
-    name: "陈医生",
-    message: "感恩一年的同行与信任。愿我们继续携手，为每一位患者带去希望与温暖。",
-    ts: Date.now() - 3600000 * 8,
-  },
-];
-
-function loadWishes(): Wish[] {
-  if (typeof window === "undefined") return SEED_WISHES;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return SEED_WISHES;
-    const parsed = JSON.parse(raw) as Wish[];
-    if (!Array.isArray(parsed)) return SEED_WISHES;
-    // Merge saved user wishes on top of seeds (user wishes first, newest first)
-    const userWishes = parsed.filter((w) => !w.id.startsWith("seed"));
-    return [...userWishes, ...SEED_WISHES];
-  } catch {
-    return SEED_WISHES;
-  }
-}
-
-function timeAgo(ts: number, lang: Lang): string {
+function timeAgo(dateInput: any, lang: Lang): string {
+  if (!dateInput) return lang === "zh" ? "刚刚" : lang === "id" ? "baru saja" : "just now";
+  const ts = typeof dateInput === "number" ? dateInput : new Date(dateInput).getTime();
   const diff = Date.now() - ts;
   const m = Math.floor(diff / 60000);
   const h = Math.floor(diff / 3600000);
@@ -83,31 +44,39 @@ function timeAgo(ts: number, lang: Lang): string {
 
 export function Guestbook({ lang }: { lang: Lang }) {
   const t = DICT[lang];
-  // SSR-safe: start with seeds, hydrate from localStorage via lazy read in
-  // a useState initializer guarded by typeof window.
-  const [wishes, setWishes] = useState<Wish[]>(() => {
-    if (typeof window === "undefined") return SEED_WISHES;
-    return loadWishes();
-  });
+  const [wishes, setWishes] = useState<Wish[]>([]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [justAdded, setJustAdded] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Keep storage in sync when wishes change after hydration
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Only persist user-added wishes (id not starting with "seed")
-      const toSave = wishes.filter((w) => !w.id.startsWith("seed"));
+    let active = true;
+    async function fetchWishes() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-      } catch {
-        /* ignore */
+        const res = await fetch("/api/wishes");
+        if (res.ok) {
+          const data = await res.json();
+          if (active) {
+            setWishes(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load wishes:", err);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
     }
-  }, [wishes]);
+    fetchWishes();
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) {
       setError(
@@ -120,18 +89,37 @@ export function Guestbook({ lang }: { lang: Lang }) {
       return;
     }
     setError("");
-    const wish: Wish = {
-      id: `w-${Date.now()}`,
-      name: name.trim().slice(0, 60),
-      message: message.trim().slice(0, 400),
-      ts: Date.now(),
-    };
-    const next = [wish, ...wishes];
-    setWishes(next); // effect persists user wishes to localStorage
-    setName("");
-    setMessage("");
-    setJustAdded(wish.id);
-    setTimeout(() => setJustAdded(null), 2500);
+
+    try {
+      const res = await fetch("/api/wishes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          message: message.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save wish");
+      }
+
+      const newWish = await res.json();
+      setWishes((prev) => [newWish, ...prev]);
+      setName("");
+      setMessage("");
+      setJustAdded(newWish.id);
+      setTimeout(() => setJustAdded(null), 2500);
+    } catch (err) {
+      console.error(err);
+      setError(
+        lang === "id"
+          ? "Gagal mengirim ucapan. Silakan coba lagi."
+          : lang === "zh"
+            ? "发送失败，请重试。"
+            : "Failed to send wish. Please try again."
+      );
+    }
   };
 
   return (
@@ -199,7 +187,11 @@ export function Guestbook({ lang }: { lang: Lang }) {
 
         {/* Wishes list */}
         <div className="mt-8 max-h-[460px] space-y-4 overflow-y-auto pr-1 fancy-scroll">
-          {wishes.length === 0 ? (
+          {loading ? (
+            <p className="py-8 text-center font-cormorant text-sm italic text-navy/50">
+              {lang === "zh" ? "加载中..." : lang === "id" ? "Memuat..." : "Loading..."}
+            </p>
+          ) : wishes.length === 0 ? (
             <p className="py-8 text-center font-cormorant text-sm italic text-navy/50">
               {t.wishEmpty}
             </p>
@@ -227,7 +219,7 @@ export function Guestbook({ lang }: { lang: Lang }) {
                           {w.name}
                         </p>
                         <p className="font-body-inv text-[10px] tracking-wide text-navy/45">
-                          {timeAgo(w.ts, lang)}
+                          {timeAgo(w.createdAt, lang)}
                         </p>
                       </div>
                       <Heart

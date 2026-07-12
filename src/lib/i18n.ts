@@ -76,9 +76,6 @@ export type Dict = {
   galleryCaption4: string;
   galleryCaption5: string;
   galleryCaption6: string;
-  // attire
-  attireLabel: string;
-  attireValue: string;
   // section nav labels
   navHero: string;
   // guestbook
@@ -101,13 +98,6 @@ export type Dict = {
   saveDatePrompt: string;
   saveDateGranted: string;
   saveDateDenied: string;
-  // venue map + dress code
-  venueMap: string;
-  venueMapHint: string;
-  openInMaps: string;
-  dressInspiration: string;
-  dressFormal: string;
-  dressBatik: string;
   // RSVP thank-you card
   thankYouTitle: string;
   thankYouBody: (n: string) => string;
@@ -147,7 +137,7 @@ const en: Dict = {
   venue: "Venue",
   rsvpShort: "RSVP",
   dateValue: "Tuesday, July 28, 2026",
-  timeValue: "10 AM",
+  timeValue: "4:30 PM",
   venueName: "Golden Tulip Jineng Resort",
   venueAddr: "Jl. Sunset Road No.98, Kuta, Kec. Kuta, Kabupaten Badung, Bali",
   rsvpPhone: "0857 1055 8888 · Marlyne",
@@ -198,8 +188,6 @@ const en: Dict = {
   galleryCaption4: "Venue",
   galleryCaption5: "Anniversary",
   galleryCaption6: "Gratitude",
-  attireLabel: "Attire",
-  attireValue: "Formal · Batik welcome",
   navHero: "Invitation",
   guestbookTitle: "Wishes & Greetings",
   guestbookIntro: "Leave a warm wish for our first anniversary.",
@@ -219,12 +207,6 @@ const en: Dict = {
   saveDatePrompt: "Enable a browser reminder one day before the event?",
   saveDateGranted: "Reminder set — we will notify you one day before.",
   saveDateDenied: "Notifications blocked. You can enable them in browser settings.",
-  venueMap: "Venue Location",
-  venueMapHint: "Golden Tulip Jineng Resort, Kuta, Bali",
-  openInMaps: "Open in Google Maps",
-  dressInspiration: "Dress Inspiration",
-  dressFormal: "Formal Attire",
-  dressBatik: "Batik Welcome",
   thankYouTitle: "Thank you",
   thankYouBody: (n) => `Dear ${n}, your attendance confirmation means the world to us. We look forward to celebrating together on July 28, 2026.`,
   thankYouClose: "Close",
@@ -259,7 +241,7 @@ const id: Dict = {
   venue: "Lokasi",
   rsvpShort: "RSVP",
   dateValue: "Selasa, 28 Juli 2026",
-  timeValue: "Pukul 10.00",
+  timeValue: "Pukul 16.30",
   venueName: "Golden Tulip Jineng Resort",
   venueAddr: "Jl. Sunset Road No.98, Kuta, Kec. Kuta, Kabupaten Badung, Bali",
   rsvpPhone: "0857 1055 8888 · Marlyne",
@@ -310,8 +292,6 @@ const id: Dict = {
   galleryCaption4: "Lokasi Acara",
   galleryCaption5: "Ulang Tahun",
   galleryCaption6: "Rasa Syukur",
-  attireLabel: "Busana",
-  attireValue: "Formal · Batik diterima",
   navHero: "Undangan",
   guestbookTitle: "Ucapan & Doa",
   guestbookIntro: "Tinggalkan ucapan hangat untuk ulang tahun pertama kami.",
@@ -331,12 +311,6 @@ const id: Dict = {
   saveDatePrompt: "Aktifkan pengingat browser satu hari sebelum acara?",
   saveDateGranted: "Pengingat disetel — kami akan memberi tahu Anda sehari sebelumnya.",
   saveDateDenied: "Notifikasi diblokir. Anda dapat mengaktifkannya di pengaturan browser.",
-  venueMap: "Lokasi Tempat Acara",
-  venueMapHint: "Golden Tulip Jineng Resort, Kuta, Bali",
-  openInMaps: "Buka di Google Maps",
-  dressInspiration: "Inspirasi Busana",
-  dressFormal: "Busana Formal",
-  dressBatik: "Batik Diterima",
   thankYouTitle: "Terima kasih",
   thankYouBody: (n) => `Yth. ${n}, konfirmasi kehadiran Anda sangat berarti bagi kami. Kami menantikan perayaan bersama pada 28 Juli 2026.`,
   thankYouClose: "Tutup",
@@ -371,7 +345,7 @@ const zh: Dict = {
   venue: "地点",
   rsvpShort: "回执",
   dateValue: "2026年7月28日 星期二",
-  timeValue: "上午10点",
+  timeValue: "下午4点30分",
   venueName: "Golden Tulip Jineng Resort",
   venueAddr: "Jl. Sunset Road No.98, Kuta, Kec. Kuta, Kabupaten Badung, Bali",
   rsvpPhone: "0857 1055 8888 · Marlyne",
@@ -422,8 +396,6 @@ const zh: Dict = {
   galleryCaption4: "会场",
   galleryCaption5: "周年纪念",
   galleryCaption6: "感恩",
-  attireLabel: "着装",
-  attireValue: "正装 · 欢迎穿着巴迪克",
   navHero: "邀请函",
   guestbookTitle: "祝福与寄语",
   guestbookIntro: "为我们的一周年纪念留下温暖的祝福。",
@@ -443,12 +415,6 @@ const zh: Dict = {
   saveDatePrompt: "是否在活动前一天启用浏览器提醒？",
   saveDateGranted: "提醒已设置 — 我们将在前一天通知您。",
   saveDateDenied: "通知已被阻止。您可以在浏览器设置中启用。",
-  venueMap: "会场位置",
-  venueMapHint: "Golden Tulip Jineng Resort, 库塔, 巴厘岛",
-  openInMaps: "在 Google 地图中打开",
-  dressInspiration: "着装灵感",
-  dressFormal: "正装",
-  dressBatik: "欢迎巴迪克",
   thankYouTitle: "感谢您",
   thankYouBody: (n) => `尊敬的${n}，您的出席确认对我们意义非凡。期待与您在 2026 年 7 月 28 日共庆佳节。`,
   thankYouClose: "关闭",
