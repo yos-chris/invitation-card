@@ -178,7 +178,7 @@ export function LanguageScreen({
             style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
           >
             <div className="flex flex-col items-center gap-1 rounded-xl border border-gold/50 bg-ivory/50 px-8 py-3.5 backdrop-blur-sm">
-              <span className="font-cormorant text-xs uppercase tracking-[0.2em] text-navy/60">
+              <span className="font-cormorant text-xs tracking-[0.2em] text-navy/60">
                 Dear,
               </span>
               <span className="font-serif-inv text-2xl font-bold tracking-wide text-navy sm:text-3xl">
