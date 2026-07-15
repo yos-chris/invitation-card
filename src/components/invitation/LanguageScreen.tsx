@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LANGS, type Lang } from "@/lib/i18n";
 import { FrameCorners, ClassicDivider, FloralSprig, LotusMark } from "./Ornaments";
 
@@ -25,15 +25,51 @@ function getGuestName(): string {
   }
 }
 
+/* Read guest prefix/salutation from URL. Supported prefixes: mr, mrs, community.
+   Falls back to "" if not provided. */
+function getGuestPrefix(): string {
+  if (typeof window === "undefined") return "";
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get("p") || params.get("prefix") || params.get("title") || params.get("salutation");
+  if (!p) return "";
+  
+  const clean = p.trim().toLowerCase();
+  if (clean === "mr" || clean === "mr.") {
+    return "Mr.";
+  }
+  if (clean === "mrs" || clean === "mrs.") {
+    return "Mrs.";
+  }
+  if (clean === "community" || clean === "comunity") {
+    return "Community";
+  }
+  
+  try {
+    const decoded = decodeURIComponent(p).trim();
+    if (!decoded) return "";
+    return decoded
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  } catch {
+    return p.trim();
+  }
+}
+
 export function LanguageScreen({
   onSelect,
 }: {
   onSelect: (lang: Lang) => void;
 }) {
-  // SSR-safe lazy initializer
-  const [guestName] = useState<string>(() =>
-    typeof window !== "undefined" ? getGuestName() : "",
-  );
+  const [mounted, setMounted] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [guestPrefix, setGuestPrefix] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+    setGuestName(getGuestName());
+    setGuestPrefix(getGuestPrefix());
+  }, []);
 
   return (
     <div className="paper-ivory relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden px-4 py-10">
@@ -136,17 +172,17 @@ export function LanguageScreen({
         </p>
 
         {/* === PERSONALIZED GREETING (URL-based: ?to=GuestName) === */}
-        {guestName ? (
+        {mounted && guestName ? (
           <div
             className="mt-4 flex flex-col items-center gap-1.5"
             style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
           >
             <div className="flex flex-col items-center gap-1 rounded-xl border border-gold/50 bg-ivory/50 px-8 py-3.5 backdrop-blur-sm">
               <span className="font-cormorant text-xs uppercase tracking-[0.2em] text-navy/60">
-                Dear
+                Dear,
               </span>
               <span className="font-serif-inv text-2xl font-bold tracking-wide text-navy sm:text-3xl">
-                {guestName}
+                {guestPrefix ? `${guestPrefix} ${guestName}` : guestName}
               </span>
             </div>
           </div>
