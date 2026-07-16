@@ -27,8 +27,8 @@ export function SaveDate({ lang }: { lang: Lang }) {
   const [showPrompt, setShowPrompt] = useState(false);
 
   const schedule = () => {
-    // Event: July 28, 2026 10:00 AM +08:00. Reminder: July 27, 10:00 AM.
-    const remindAt = new Date("2026-07-27T10:00:00+08:00").getTime();
+    // Event: July 28, 2026 4:00 PM +08:00. Reminder: July 27, 4:00 PM.
+    const remindAt = new Date("2026-07-27T16:00:00+08:00").getTime();
     const now = Date.now();
     const delay = Math.max(1000, remindAt - now);
     // setTimeout works while the page is open; this is a best-effort reminder.

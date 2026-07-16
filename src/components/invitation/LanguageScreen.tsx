@@ -168,7 +168,7 @@ export function LanguageScreen({
           className="mt-1 font-serif-inv text-2xl italic text-royal sm:text-3xl"
           style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.85s both" }}
         >
-          Bali Office
+          Bali Customer Relation Office
         </p>
 
         {/* === PERSONALIZED GREETING (URL-based: ?to=GuestName) === */}

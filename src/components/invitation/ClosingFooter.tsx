@@ -163,7 +163,7 @@ export function ClosingFooter({
           />
 
           <p className="mt-3 font-body-inv text-[10px] tracking-[0.2em] text-ivory/35">
-            © 2026 · BALI OFFICE · FIRST ANNIVERSARY
+            © 2026 · BALI CUSTOMER RELATION OFFICE · FIRST ANNIVERSARY
           </p>
         </div>
       </Reveal>

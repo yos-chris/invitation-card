@@ -25,13 +25,13 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "1st Anniversary · Bali Office · Modern Cancer Hospital Guangzhou",
+  title: "1st Anniversary · Bali Customer Relation Office · Modern Cancer Hospital Guangzhou",
   description:
-    "Premium digital invitation — First Anniversary of the Bali Office, Modern Cancer Hospital Guangzhou / St. Stamford International Medical.",
+    "Premium digital invitation — First Anniversary of the Bali Customer Relation Office, Modern Cancer Hospital Guangzhou / St. Stamford International Medical.",
   keywords: [
     "Modern Cancer Hospital Guangzhou",
     "St. Stamford International Medical",
-    "Bali Office Anniversary",
+    "Bali Customer Relation Office Anniversary",
     "Invitation",
   ],
   authors: [{ name: "Modern Cancer Hospital Guangzhou" }],
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     icon: "/invitation/logo-white.png",
   },
   openGraph: {
-    title: "1st Anniversary · Bali Office",
+    title: "1st Anniversary · Bali Customer Relation Office",
     description:
-      "We warmly invite you to celebrate the First Anniversary of the Bali Office.",
+      "We warmly invite you to celebrate the First Anniversary of the Bali Customer Relation Office.",
     type: "website",
   },
 };

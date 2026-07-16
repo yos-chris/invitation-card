@@ -23,8 +23,8 @@ type JourneyPhoto = {
 const PHOTOS: JourneyPhoto[] = [
   {
     src: "/invitation/journey/office-grand-opening.jpg",
-    alt: "Grand opening group photo at Bali Office",
-    label: "Bali Office",
+    alt: "Grand opening group photo at Bali Customer Relation Office",
+    label: "Bali Customer Relation Office",
     titleKey: "j1Title",
     subKey: "j1Sub",
     span: "col-span-12 sm:col-span-5 row-span-3",
@@ -107,7 +107,7 @@ const PHOTOS: JourneyPhoto[] = [
 /* Localized captions map (inline to keep component self-contained) */
 const CAPTIONS: Record<Lang, Record<string, string>> = {
   en: {
-    j1Title: "Grand Opening Bali Office",
+    j1Title: "Grand Opening Bali Customer Relation Office",
     j1Sub: "The beginning of our journey in Bali.",
     j2Title: "Cancer Awareness & Hope Talk",
     j2Sub: "Sharing knowledge, care, and support with the community.",
@@ -127,7 +127,7 @@ const CAPTIONS: Record<Lang, Record<string, string>> = {
     j9Sub: "One step closer to awareness, support, and hope.",
   },
   id: {
-    j1Title: "Pembukaan Kantor Bali",
+    j1Title: "Pembukaan Bali Customer Relation Office",
     j1Sub: "Awal perjalanan pelayanan kami di Bali.",
     j2Title: "Edukasi Kanker & Harapan",
     j2Sub: "Berbagi pengetahuan, kepedulian, dan dukungan bersama masyarakat.",
@@ -147,7 +147,7 @@ const CAPTIONS: Record<Lang, Record<string, string>> = {
     j9Sub: "Satu langkah lebih dekat menuju kesadaran, dukungan, dan harapan.",
   },
   zh: {
-    j1Title: "巴厘岛办公室开幕",
+    j1Title: "巴厘岛服务中心开幕",
     j1Sub: "我们在巴厘岛服务旅程的开始。",
     j2Title: "癌症知识与希望分享会",
     j2Sub: "与社区分享知识、关怀与支持。",

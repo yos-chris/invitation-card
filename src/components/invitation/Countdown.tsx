@@ -5,8 +5,8 @@ import { DICT, type Lang } from "@/lib/i18n";
 import { Reveal } from "./Reveal";
 import { LotusMark, ClassicDivider, FloralSprig } from "./Ornaments";
 
-// Event: Tuesday, July 28, 2026, 10:00 AM +08:00
-const EVENT_DATE = new Date("2026-07-28T10:00:00+08:00").getTime();
+// Event: Tuesday, July 28, 2026, 4:00 PM +08:00
+const EVENT_DATE = new Date("2026-07-28T16:00:00+08:00").getTime();
 
 function diff(target: number) {
   const now = Date.now();

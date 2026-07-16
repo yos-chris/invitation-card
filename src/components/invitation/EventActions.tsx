@@ -7,11 +7,11 @@ import { SaveDate } from "./SaveDate";
 
 // Event details (shared, language-independent for the calendar file)
 const EVENT = {
-  title: "1st Anniversary — Bali Office · Modern Cancer Hospital Guangzhou",
-  start: "20260728T020000Z", // 10:00 +08:00 = 02:00 UTC
-  end: "20260728T050000Z",
+  title: "1st Anniversary — Bali Customer Relation Office · Modern Cancer Hospital Guangzhou",
+  start: "20260728T080000Z", // 16:00 +08:00 = 08:00 UTC
+  end: "20260728T110000Z", // 19:00 +08:00 = 11:00 UTC
   location: "Golden Tulip Jineng Resort, Jl. Sunset Road No.98, Kuta, Badung, Bali",
-  desc: "First Anniversary of the Bali Office — Modern Cancer Hospital Guangzhou / St. Stamford International Medical.",
+  desc: "First Anniversary of the Bali Customer Relation Office — Modern Cancer Hospital Guangzhou / St. Stamford International Medical.",
 };
 
 function buildIcs(): string {
