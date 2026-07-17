@@ -117,14 +117,8 @@ export function LanguageScreen({
         />
 
         <p
-          className="font-cormorant text-sm uppercase tracking-[0.35em] text-orange"
-          style={{ animation: "rise-up 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s both" }}
-        >
-          St. Stamford International Medical
-        </p>
-        <p
           className="mt-1 font-cormorant text-xs tracking-[0.2em] text-navy/60"
-          style={{ animation: "rise-up 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
+          style={{ animation: "rise-up 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s both" }}
         >
           Modern Cancer Hospital Guangzhou
         </p>
@@ -132,7 +126,7 @@ export function LanguageScreen({
         {/* Logo with staggered entrance + soft glow aura */}
         <div
           className="relative my-7 w-full max-w-[520px]"
-          style={{ animation: "scale-in 1.1s cubic-bezier(0.22,1,0.36,1) 0.4s both" }}
+          style={{ animation: "scale-in 1.1s cubic-bezier(0.22,1,0.36,1) 0.3s both" }}
         >
           {/* glow aura behind logo */}
           <div
@@ -160,13 +154,13 @@ export function LanguageScreen({
 
         <h1
           className="font-serif-inv text-4xl font-semibold leading-tight text-navy sm:text-5xl"
-          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.7s both" }}
+          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.5s both" }}
         >
           First Anniversary
         </h1>
         <p
           className="mt-1 font-serif-inv text-2xl italic text-royal sm:text-3xl"
-          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.85s both" }}
+          style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.65s both" }}
         >
           Bali Customer Relation Office
         </p>
@@ -175,7 +169,7 @@ export function LanguageScreen({
         {mounted && guestName ? (
           <div
             className="mt-4 flex flex-col items-center gap-1.5"
-            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
+            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.75s both" }}
           >
             <div className="flex flex-col items-center gap-1 rounded-xl border border-gold/50 bg-ivory/50 px-8 py-3.5 backdrop-blur-sm">
               <span className="font-cormorant text-xs tracking-[0.2em] text-navy/60">
@@ -189,7 +183,7 @@ export function LanguageScreen({
         ) : (
           <p
             className="mt-3 max-w-md font-body-inv text-sm leading-relaxed text-navy/70"
-            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 1s both" }}
+            style={{ animation: "rise-up 0.9s cubic-bezier(0.22,1,0.36,1) 0.8s both" }}
           >
             We warmly invite you to celebrate one year of gratitude, care, and
             togetherness.
@@ -204,7 +198,7 @@ export function LanguageScreen({
         {/* Language buttons with staggered entrance */}
         <p
           className="mb-4 font-cormorant text-xs uppercase tracking-[0.3em] text-navy/55"
-          style={{ animation: "rise-up 0.8s cubic-bezier(0.22,1,0.36,1) 1.1s both" }}
+          style={{ animation: "rise-up 0.8s cubic-bezier(0.22,1,0.36,1) 0.9s both" }}
         >
           Select your language
         </p>
@@ -214,7 +208,7 @@ export function LanguageScreen({
               key={l.code}
               onClick={() => onSelect(l.code)}
               className="btn-pill flex-1 sm:flex-none"
-              style={{ animation: `rise-up 0.8s cubic-bezier(0.22,1,0.36,1) ${1.2 + i * 0.1}s both` }}
+              style={{ animation: `rise-up 0.8s cubic-bezier(0.22,1,0.36,1) ${1.0 + i * 0.1}s both` }}
             >
               <span className="text-base">{l.label}</span>
             </button>
@@ -223,7 +217,7 @@ export function LanguageScreen({
 
         <p
           className="mt-8 font-cormorant text-[11px] tracking-[0.25em] text-navy/45"
-          style={{ animation: "fade-in 1s ease 1.6s both" }}
+          style={{ animation: "fade-in 1s ease 1.4s both" }}
         >
           A DIGITAL INVITATION · 2026
         </p>

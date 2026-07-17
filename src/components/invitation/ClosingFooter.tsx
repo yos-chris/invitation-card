@@ -131,9 +131,11 @@ export function ClosingFooter({
               className="mx-auto block w-full max-w-[280px] select-none object-contain opacity-90"
               draggable={false}
             />
-            <p className="font-cormorant text-xs uppercase tracking-[0.25em] text-gold/80">
-              {t.footerSig}
-            </p>
+            {t.footerSig && (
+              <p className="font-cormorant text-xs uppercase tracking-[0.25em] text-gold/80">
+                {t.footerSig}
+              </p>
+            )}
           </div>
 
           <button

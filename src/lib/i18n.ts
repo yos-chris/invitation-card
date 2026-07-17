@@ -162,7 +162,7 @@ const en: Dict = {
   messagePlaceholder: "A warm message (optional)",
   confirmBtn: "Confirm via WhatsApp",
   footerText: "Your presence will mean a lot to us.",
-  footerSig: "Modern Cancer Hospital Guangzhou · St. Stamford International Medical",
+  footerSig: "",
   waMessage: (n, a, g, gc, gn, m) =>
     `I would like to confirm my attendance for the First Anniversary of Bali Customer Relation Office.\n\nName: ${n}\nAttendance: ${a}\nNumber of guests: ${g}\nGuest category: ${gc}\nGuest names: ${gn}\nMessage: ${m}\n\nThank you.`,
   musicOn: "Music on",
@@ -266,7 +266,7 @@ const id: Dict = {
   messagePlaceholder: "Pesan hangat (opsional)",
   confirmBtn: "Konfirmasi via WhatsApp",
   footerText: "Kehadiran Anda akan sangat berarti bagi kami.",
-  footerSig: "Modern Cancer Hospital Guangzhou · St. Stamford International Medical",
+  footerSig: "",
   waMessage: (n, a, g, gc, gn, m) =>
     `Saya ingin mengonfirmasi kehadiran untuk acara Ulang Tahun Pertama Bali Customer Relation Office.\n\nNama: ${n}\nKehadiran: ${a}\nJumlah tamu: ${g}\nTamu yang ikut: ${gc}\nNama tamu: ${gn}\nPesan: ${m}\n\nTerima kasih.`,
   musicOn: "Musik aktif",
@@ -370,7 +370,7 @@ const zh: Dict = {
   messagePlaceholder: "温馨留言（可选）",
   confirmBtn: "通过 WhatsApp 确认",
   footerText: "您的到来对我们意义非凡。",
-  footerSig: "广州现代肿瘤医院 · St. Stamford International Medical",
+  footerSig: "",
   waMessage: (n, a, g, gc, gn, m) =>
     `我想确认参加巴厘岛服务中心一周年纪念活动。\n\n姓名：${n}\n出席情况：${a}\n宾客人数：${g}\n同行宾客：${gc}\n宾客姓名：${gn}\n留言：${m}\n\n谢谢。`,
   musicOn: "音乐开启",
